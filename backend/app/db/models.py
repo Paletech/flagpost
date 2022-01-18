@@ -18,18 +18,19 @@ class User(Base):
     is_superuser = Column(Boolean, default=False)
 
     posts = relationship("Posts")
-    files = relationship("Files")
-    images = relationship("Images")
-    categories = relationship("Categories")
 
+
+association_table = Table('association', Base.metadata,
+    Column('category_id', ForeignKey('category.id')),
+    Column('post_id', ForeignKey('post.id'))
+)
 
 class Categories(Base):
     __tablename__ = "category"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True, unique=True)
     image_id = Column(Integer, ForeignKey("image.id"))
-    post_id = Column(Integer, ForeignKey("post.id"))
-    user_id = Column(Integer, ForeignKey("user.id"))
+    post = relationship("Posts", secondary=association_table)
     category_id = Column(Integer)
     selected = Column(Integer)
     name = Column(String)
@@ -42,7 +43,6 @@ class Images(Base):
     __tablename__ = "image"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True, unique=True)
-    user_id = Column(Integer, ForeignKey("user.id"))
     path = Column(String)
     public_path = Column(String)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
@@ -62,14 +62,12 @@ class Posts(Base):
     updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
 
     files = relationship("Files")
-    categories = relationship("Categories")
 
 
 class Files(Base):
     __tablename__ = "file"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True, unique=True)
-    user_id = Column(Integer, ForeignKey("user.id"))
     post_id = Column(Integer, ForeignKey("post.id"))
     width = Column(Integer)
     height = Column(Integer)
