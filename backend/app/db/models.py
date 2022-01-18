@@ -18,6 +18,7 @@ class User(Base):
     is_superuser = Column(Boolean, default=False)
 
     posts = relationship("Posts")
+    categories = relationship("Categories")
 
 
 association_table = Table('association', Base.metadata,
@@ -30,6 +31,7 @@ class Categories(Base):
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True, unique=True)
     image_id = Column(Integer, ForeignKey("image.id"))
+    user_id = Column(Integer, ForeignKey("user.id"))
     post = relationship("Posts", secondary=association_table)
     category_id = Column(Integer)
     selected = Column(Integer)
