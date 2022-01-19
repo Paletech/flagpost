@@ -4,6 +4,7 @@ import uvicorn
 
 # from api.api_v1.routers.jobs import jobs_router
 from app.api.api_v1.routers.categories import categories_router
+from app.api.api_v1.routers.posts import posts_router
 from app.api.api_v1.routers.users import users_router
 from app.api.api_v1.routers.auth import auth_router
 from app.core import config
@@ -48,6 +49,7 @@ app.include_router(
 
 app.include_router(auth_router, prefix="/api", tags=["auth"])
 app.include_router(categories_router, prefix="/api/v1", tags=["categories"])
+app.include_router(posts_router, prefix="/api/v1", tags=["posts"])
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", reload=True, port=8888)
+    uvicorn.run("main:app", host="0.0.0.0", reload=True, port=8000)

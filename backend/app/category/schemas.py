@@ -3,35 +3,41 @@ import datetime
 from pydantic import BaseModel
 from pydantic.color import Color
 import typing as t
+from typing import List, Optional, Set
+
+from fastapi import FastAPI
+from pydantic import BaseModel, HttpUrl
+
+from app.image.schemas import ImageOut
 
 
 class CategoryBase(BaseModel):
-    # user_id: int
-    # image_id: int
     name: str = None
-    color: Color = None # ошибка
+    color: str = None
 
 
 class CategoryOut(CategoryBase):
-    id: int
-    # user_id: int
-    # image_id: int
+    id: int = None
+    user_id: int = None
     category_id: int = None
     selected: int = None
-    created_at: datetime.datetime = None
-    updated_at: datetime.datetime = None
+    created_at: datetime.datetime = datetime.datetime.utcnow()
+    updated_at: datetime.datetime = datetime.datetime.utcnow()
+    image: Optional[ImageOut] = None
 
     class Config:
         orm_mode = True
 
 
 class CategoryCreate(CategoryBase):
+    image_id: str = None
+
     class Config:
         orm_mode = True
 
 
 class CategoryEdit(CategoryBase):
-    id: int
+    image_id: str = None
 
     class Config:
         orm_mode = True

@@ -1,34 +1,36 @@
+import datetime
+from typing import List, Optional
+from uuid import UUID
+
 from pydantic import BaseModel
-import typing as t
+
+from app.category.schemas import CategoryOut
 
 
-class JobBase(BaseModel):
-    title: str
-    description: str
-    salary_from: int
-    salary_to: int
-    is_active: bool = True
+class PostBase(BaseModel):
+    type: str = None
+    text: str = None
 
 
-class JobOut(JobBase):
-    pass
+class PostOut(PostBase):
+    id: UUID = None
+    user_id: int = None
+    created_at: datetime.datetime = None
+    updated_at: datetime.datetime = None
+    category: Optional[List[CategoryOut]] = []
+    # category: List[CategoryOut] = []
 
-
-class JobCreate(JobBase):
     class Config:
         orm_mode = True
 
 
-class JobEdit(JobBase):
+class PostCreate(PostBase):
+    class Config:
+        orm_mode = True
+
+
+class PostEdit(PostBase):
     id: int
 
     class Config:
         orm_mode = True
-
-
-# class User(JobBase):
-#     id: int
-#
-#     class Config:
-#         orm_mode = True
-

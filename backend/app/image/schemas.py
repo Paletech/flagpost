@@ -1,34 +1,17 @@
 from pydantic import BaseModel
 import typing as t
+import datetime
 
 
-class JobBase(BaseModel):
-    title: str
-    description: str
-    salary_from: int
-    salary_to: int
-    is_active: bool = True
+class ImageBase(BaseModel):
+    path: str = None
+    public_path: str = None
 
 
-class JobOut(JobBase):
-    pass
-
-
-class JobCreate(JobBase):
-    class Config:
-        orm_mode = True
-
-
-class JobEdit(JobBase):
+class ImageOut(ImageBase):
     id: int
+    created_at: datetime.datetime = None
+    updated_at: datetime.datetime = None
 
     class Config:
         orm_mode = True
-
-
-# class User(JobBase):
-#     id: int
-#
-#     class Config:
-#         orm_mode = True
-

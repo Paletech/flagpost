@@ -7,56 +7,56 @@ from . import schemas
 from app.db import models
 
 
-def get_job(db: Session, jobs_id: int):
-    job = db.query(models.Jobs).filter(models.Jobs.id == jobs_id).first()
-    if not job:
-        raise HTTPException(status_code=404, detail="Job not found")
-    return job
+def get_all_posts(db: Session, skip: int = 0, limit: int = 100) -> t.List[schemas.PostOut]:
+    return db.query(models.Posts).offset(skip).limit(limit).all()
 
 
-def get_jobs(db: Session, skip: int = 0, limit: int = 100) -> t.List[schemas.JobOut]:
-    return db.query(models.Jobs).offset(skip).limit(limit).all()
+def get_post(db: Session, post_id: int):
+    post = db.query(models.Posts).filter(models.Posts.id == post_id).first()
+    if not post:
+        raise HTTPException(status_code=404, detail="Post not found")
+    return post
 
 
-def create_job(db: Session, user_id: int, job: schemas.JobCreate):
-    db_jobs = models.Jobs(
+def get_my_post(db: Session, user_id: int):
+    post = db.query(models.Posts).filter(models.Categories.user_id == user_id).first()
+    if not post:
+        raise HTTPException(status_code=404, detail="Post not found")
+    return post
+
+
+def create_post(db: Session, user_id: int, post: schemas.PostCreate):
+    db_post = models.Posts(
         user_id=user_id,
-        title=job.title,
-        description=job.description,
-        salary_from=job.salary_from,
-        salary_to=job.salary_to,
-        is_active=job.is_active,
-
+        text=post.text,
+        # categories=post.categories,
+        # files=post.files,
     )
-    db.add(db_jobs)
+    db.add(db_post)
     db.commit()
-    db.refresh(db_jobs)
-    return db_jobs
+    db.refresh(db_post)
+    return db_post
 
 
-def delete_job(db: Session, job: int):
-    job = get_jobs(db, job)
-    if not job:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Job not found")
-    db.delete(job)
+def delete_post(db: Session, post: int):
+    post = get_my_post(db, post)
+    if not post:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Post not found")
+    db.delete(post)
     db.commit()
-    return job
+    return post
 
-#fix schemas.JobBase
-# def edit_user( db: Session, user_id: int, job: schemas.JobBase) -> schemas.User:
-#     db_job = get_jobs(db, user_id)
-#     if not db_job:
-#         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Job not found")
-#     update_data = job.dict(exclude_unset=True)
-#
-#     if "password" in update_data:
-#         update_data["hashed_password"] = get_password_hash(user.password)
-#         del update_data["password"]
-#
-#     for key, value in update_data.items():
-#         setattr(db_user, key, value)
-#
-#     db.add(db_user)
-#     db.commit()
-#     db.refresh(db_user)
-#     return db_user
+
+def edit_post(db: Session, post_id: int, post: schemas.PostBase) -> schemas.PostOut:
+    db_post = get_my_post(db, post_id)
+    if not db_post:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Post not found")
+    update_data = post.dict(exclude_unset=True)
+
+    for key, value in update_data.items():
+        setattr(db_post, key, value)
+
+    db.add(db_post)
+    db.commit()
+    db.refresh(db_post)
+    return db_post
