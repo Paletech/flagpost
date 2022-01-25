@@ -1,6 +1,6 @@
 import os
 
-PROJECT_NAME = "fastapi-admin"
+PROJECT_NAME = "flag-post"
 
 SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")
 

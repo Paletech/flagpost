@@ -7,56 +7,42 @@ from . import schemas
 from app.db import models
 
 
-def get_job(db: Session, jobs_id: int):
-    job = db.query(models.Jobs).filter(models.Jobs.id == jobs_id).first()
-    if not job:
-        raise HTTPException(status_code=404, detail="Job not found")
-    return job
+def get_all_files(db: Session, skip: int = 0, limit: int = 100) -> t.List[schemas.FileOut]:
+    return db.query(models.Files).offset(skip).limit(limit).all()
 
 
-def get_jobs(db: Session, skip: int = 0, limit: int = 100) -> t.List[schemas.JobOut]:
-    return db.query(models.Jobs).offset(skip).limit(limit).all()
+def get_file(db: Session, file_id: int):
+    file = db.query(models.Files).filter(models.Files.id == file_id).first()
+    if not file:
+        raise HTTPException(status_code=404, detail="File not found")
+    return file
 
 
-def create_job(db: Session, user_id: int, job: schemas.JobCreate):
-    db_jobs = models.Jobs(
-        user_id=user_id,
-        title=job.title,
-        description=job.description,
-        salary_from=job.salary_from,
-        salary_to=job.salary_to,
-        is_active=job.is_active,
+def create_file(db: Session, file: schemas.FileCreate):
+    if file.post_id is not None:
+        if not db.query(models.Files.id).filter(models.Posts.id == file.post_id).first():
+            raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Post not found")
 
+    db_files = models.Files(
+        width=file.width,
+        height=file.height,
+        path=file.path,
+        public_path=file.public_path,
+        # created_at=file.created_at,
+        # updated_at=file.updated_at,
+        post_id=file.post_id,
     )
-    db.add(db_jobs)
+
+    db.add(db_files)
     db.commit()
-    db.refresh(db_jobs)
-    return db_jobs
+    db.refresh(db_files)
+    return db_files
 
 
-def delete_job(db: Session, job: int):
-    job = get_jobs(db, job)
-    if not job:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Job not found")
-    db.delete(job)
+def delete_file(db: Session, file: int):
+    file = get_file(db, file)
+    if not file:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="File not found")
+    db.delete(file)
     db.commit()
-    return job
-
-#fix schemas.JobBase
-# def edit_user( db: Session, user_id: int, job: schemas.JobBase) -> schemas.User:
-#     db_job = get_jobs(db, user_id)
-#     if not db_job:
-#         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Job not found")
-#     update_data = job.dict(exclude_unset=True)
-#
-#     if "password" in update_data:
-#         update_data["hashed_password"] = get_password_hash(user.password)
-#         del update_data["password"]
-#
-#     for key, value in update_data.items():
-#         setattr(db_user, key, value)
-#
-#     db.add(db_user)
-#     db.commit()
-#     db.refresh(db_user)
-#     return db_user
+    return file

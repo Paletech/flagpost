@@ -20,30 +20,33 @@ async def categories_list(
         response: Response,
         db=Depends(get_db),
         current_user=Depends(get_current_user),
+        skip: int = 0,
+        limit: int = 10
 ):
     """
     Get all categories
     """
-    category = get_all_categories(db)
+    category = get_all_categories(db, skip, limit)
     response.headers["Content-Range"] = f"0-9/{len(category)}"
     return category
 
 
 @r.get(
-    "/categories/{category_id}",
-    response_model=CategoryOut,
+    "/categories/my",
+    response_model=t.List[CategoryOut],
 )
 async def categories_details(
         request: Request,
-        category_id: int,
         db=Depends(get_db),
         current_user=Depends(get_current_user),
+        skip: int = 0,
+        limit: int = 10
 ):
     """
     Get my category
     """
 
-    category = get_my_category(db, category_id, current_user)
+    category = get_my_category(db, skip, limit, user_id=current_user)
     return category
 
 

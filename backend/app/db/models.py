@@ -24,8 +24,8 @@ class User(Base):
 
 
 association_table = Table('association', Base.metadata,
-    Column('category_id', ForeignKey('category.id')),
-    Column('post_id', ForeignKey('post.id'))
+    Column('category_id', ForeignKey('category.id'), primary_key=True),
+    Column('post_id', ForeignKey('post.id'), primary_key=True)
 )
 
 
@@ -33,9 +33,6 @@ class Categories(Base):
     __tablename__ = "category"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True, unique=True)
-    image_id = Column(Integer, ForeignKey("image.id"))
-    user_id = Column(Integer, ForeignKey("user.id"), nullable=True)
-    post = relationship("Posts", secondary=association_table)
     category_id = Column(Integer)
     selected = Column(Integer)
     name = Column(String)
@@ -44,7 +41,11 @@ class Categories(Base):
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
 
+    image_id = Column(Integer, ForeignKey("image.id"))
+    user_id = Column(Integer, ForeignKey("user.id"), nullable=True)
+
     image = relationship("Images", backref=backref("category", uselist=False))
+    post = relationship("Posts", secondary=association_table, back_populates="categories")
 
 
 class Images(Base):
@@ -61,23 +62,26 @@ class Posts(Base):
     __tablename__ = "post"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True)
-    user_id = Column(Integer, ForeignKey("user.id"))
     type = Column(String)
     text = Column(String)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
 
+    user_id = Column(Integer, ForeignKey("user.id"))
+
     files = relationship("Files")
+    categories = relationship("Categories", secondary=association_table, back_populates="post")
 
 
 class Files(Base):
     __tablename__ = "file"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True, unique=True)
-    post_id = Column(UUID(as_uuid=True), ForeignKey("post.id"))
     width = Column(Integer)
     height = Column(Integer)
     path = Column(String)
     public_path = Column(String)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+
+    post_id = Column(UUID(as_uuid=True), ForeignKey("post.id"))

@@ -1,34 +1,36 @@
+import datetime
+from uuid import UUID
+
 from pydantic import BaseModel
 import typing as t
 
 
-class JobBase(BaseModel):
-    title: str
-    description: str
-    salary_from: int
-    salary_to: int
-    is_active: bool = True
+class FileBase(BaseModel):
+    width: int = None
+    height: int = None
+    path: str = None
+    public_path: str = None
 
 
-class JobOut(JobBase):
-    pass
+class FileOut(FileBase):
+    id: int
+    post_id: UUID
+    created_at: datetime.datetime = None
+    updated_at: datetime.datetime = None
 
-
-class JobCreate(JobBase):
     class Config:
         orm_mode = True
 
 
-class JobEdit(JobBase):
+class FileCreate(FileBase):
+    post_id: UUID
+
+    class Config:
+        orm_mode = True
+
+
+class FileEdit(FileBase):
     id: int
 
     class Config:
         orm_mode = True
-
-
-# class User(JobBase):
-#     id: int
-#
-#     class Config:
-#         orm_mode = True
-

@@ -21,8 +21,8 @@ class CategoryOut(CategoryBase):
     user_id: int = None
     category_id: int = None
     selected: int = None
-    created_at: datetime.datetime = datetime.datetime.utcnow()
-    updated_at: datetime.datetime = datetime.datetime.utcnow()
+    created_at: datetime.datetime = None
+    updated_at: datetime.datetime = None
     image: Optional[ImageOut] = None
 
     class Config:

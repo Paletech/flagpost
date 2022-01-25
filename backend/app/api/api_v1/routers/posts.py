@@ -1,14 +1,11 @@
-from fastapi import APIRouter, Request, Depends, Response, encoders
 import typing as t
+from uuid import UUID
 
-from app import category
-from app.category.schemas import CategoryBase, CategoryOut, CategoryCreate
-from app.category.crud import get_all_categories, get_my_category, create_category, delete_category, edit_category
+from fastapi import APIRouter, Request, Depends, Response
 
+from app.core.auth import get_current_user
 from app.db.session import get_db
-
-from app.core.auth import get_current_active_user, get_current_active_superuser
-from app.post.crud import get_all_posts, get_post, create_post, delete_post
+from app.post.crud import get_all_posts, get_post, create_post, delete_post, edit_post
 from app.post.schemas import PostOut, PostCreate
 
 posts_router = r = APIRouter()
@@ -21,12 +18,13 @@ posts_router = r = APIRouter()
 async def post_list(
         response: Response,
         db=Depends(get_db),
-        # current_user=Depends(get_current_active_superuser),
+        current_user=Depends(get_current_user),
+        skip: int = 0, limit: int = 10
 ):
     """
     Get all posts
     """
-    posts = get_all_posts(db)
+    posts = get_all_posts(db, skip, limit)
     response.headers["Content-Range"] = f"0-9/{len(posts)}"
     return posts
 
@@ -37,9 +35,9 @@ async def post_list(
 )
 async def post_details(
         request: Request,
-        post_id: int,
+        post_id: UUID,
         db=Depends(get_db),
-        # current_user=Depends(get_current_active_superuser),
+        current_user=Depends(get_current_user),
 ):
     """
     Get category by id
@@ -56,7 +54,7 @@ async def post_create(
         request: Request,
         post: PostCreate,
         db=Depends(get_db),
-        current_user=Depends(get_current_active_user),
+        current_user=Depends(get_current_user),
 ):
     """
     Create post
@@ -69,14 +67,14 @@ async def post_create(
 )
 async def post_delete(
         request: Request,
-        post_id: int,
+        post_id: UUID,
         db=Depends(get_db),
-        # current_user=Depends(get_current_active_superuser),
+        current_user=Depends(get_current_user),
 ):
     """
     Delete post
     """
-    delete_post(db, post_id)
+    delete_post(db, current_user, post_id)
     return {"status": True}
 
 
@@ -87,12 +85,12 @@ async def post_delete(
 async def post_update(
         request: Request,
         post: PostCreate,
-        post_id: int,
+        post_id: UUID,
         db=Depends(get_db),
-        # current_user=Depends(get_current_active_superuser),
+        current_user=Depends(get_current_user),
 ):
     """
     Update post
     """
 
-    return edit_category(db, post_id, post)
+    return edit_post(db, current_user, post_id, post)

@@ -5,6 +5,7 @@ from uuid import UUID
 from pydantic import BaseModel
 
 from app.category.schemas import CategoryOut
+from app.files.schemas import FileOut
 
 
 class PostBase(BaseModel):
@@ -17,16 +18,19 @@ class PostOut(PostBase):
     user_id: int = None
     created_at: datetime.datetime = None
     updated_at: datetime.datetime = None
-    category: Optional[List[CategoryOut]] = []
-    # category: List[CategoryOut] = []
+    files: Optional[List[FileOut]] = []
+    categories: Optional[List[CategoryOut]] = []
 
     class Config:
         orm_mode = True
 
 
 class PostCreate(PostBase):
-    class Config:
-        orm_mode = True
+    categories: int
+    files: int
+    #
+    # class Config:
+    #     orm_mode = True
 
 
 class PostEdit(PostBase):
