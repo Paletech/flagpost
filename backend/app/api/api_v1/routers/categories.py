@@ -2,7 +2,8 @@ from fastapi import APIRouter, Request, Depends, Response, encoders
 import typing as t
 
 from app.category.schemas import CategoryBase, CategoryOut, CategoryCreate, CategoryEdit
-from app.category.crud import get_all_categories, get_my_category, create_category, delete_category, edit_category
+from app.category.crud import get_all_categories, get_my_category, create_category, delete_category, edit_category, \
+    get_category
 
 from app.db.session import get_db
 
@@ -29,6 +30,22 @@ async def categories_list(
     category = get_all_categories(db, skip, limit)
     response.headers["Content-Range"] = f"0-9/{len(category)}"
     return category
+
+
+@r.get(
+    "/categories/{category_id}",
+    response_model=CategoryOut,
+)
+async def category_details(
+        request: Request,
+        category_id: int,
+        db=Depends(get_db),
+        current_user=Depends(get_current_user),
+):
+    """
+    Get category details
+    """
+    return get_category(db, category_id)
 
 
 @r.get(
@@ -67,7 +84,7 @@ async def categories_details(
 
 
 @r.post(
-    "/categories/create",
+    "/categories",
     response_model=CategoryOut,
 )
 async def category_create(
@@ -83,7 +100,7 @@ async def category_create(
 
 
 @r.delete(
-    "/categories/{category_id}",
+    "/categories/{category_id}",  response_model=CategoryOut, response_model_exclude_none=True
 )
 async def categories_delete(
         request: Request,
@@ -94,8 +111,8 @@ async def categories_delete(
     """
     Delete category
     """
-    delete_category(db, current_user, category_id)
-    return {"status": True}
+
+    return delete_category(db, category_id)
 
 
 @r.put(
@@ -113,4 +130,5 @@ async def categories_update(
     Update category
     """
 
-    return edit_category(db, current_user, category_id, category)
+    return edit_category(db, category_id, category)
+

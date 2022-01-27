@@ -7,7 +7,7 @@ from . import schemas
 from app.db import models
 
 
-def get_all_files(db: Session, skip: int = 0, limit: int = 100) -> t.List[schemas.FileOut]:
+def get_all_files(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Files).offset(skip).limit(limit).all()
 
 

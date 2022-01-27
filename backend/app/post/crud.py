@@ -29,25 +29,31 @@ def get_my_post(db: Session, post_id: UUID, user_id: int):
 
 def create_post(db: Session, user_id: int, post: schemas.PostCreate):
 
-    if post.files is not None:
-        if not db.query(models.Posts.id).filter(models.Files.id == post.files).first():
-            raise HTTPException(status.HTTP_404_NOT_FOUND, detail="File not found")
-
-    if post.categories is not None:
-        if not db.query(models.Posts.id).filter(models.Categories.id == post.categories).first():
-            raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Category not found")
-
     db_post = models.Posts(
         user_id=user_id,
         text=post.text,
+        type=post.type,
     )
 
-    files = db.query(models.Files).get(post.files)
-    categories = db.query(models.Categories).get(post.categories)
-    # db_post.categories.add(post.categories)
-    db_post.categories = [categories]
+    if post.files and post.files is not None:
+        files = db.query(models.Files).get(post.files)
+        db_post.files.append(files)
+        if not db.query(models.Posts.id).filter(models.Files.id == post.files).first():
+            raise HTTPException(status.HTTP_404_NOT_FOUND, detail="File not found")
 
-    db_post.files.append(files)
+    if post.categories and post.categories is not None:
+        categories = db.query(models.Categories).get(post.categories)
+        db_post.categories.add(post.categories)
+        db_post.categories = [categories]
+        if not db.query(models.Posts.id).filter(models.Categories.id == post.categories).first():
+            raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Category not found")
+
+    # files = db.query(models.Files).get(post.files)
+    # categories = db.query(models.Categories).get(post.categories)
+    # db_post.categories.add(post.categories)
+    # db_post.categories = [categories]
+
+    # db_post.files.append(files)
     db.add(db_post)
     db.commit()
     db.refresh(db_post)

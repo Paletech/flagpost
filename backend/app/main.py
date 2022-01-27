@@ -56,4 +56,4 @@ app.include_router(images_router, prefix="/api/v1", tags=["images"])
 app.include_router(files_router, prefix="/api/v1", tags=["files"])
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", reload=True, port=8000)
+    uvicorn.run("main:app", host="0.0.0.0", reload=True, port=8888)

@@ -1,7 +1,7 @@
 import typing as t
 from uuid import UUID
 
-from fastapi import APIRouter, Request, Depends, Response
+from fastapi import APIRouter, Request, Depends, Response, UploadFile, File
 
 from app.core.auth import get_current_user
 from app.db.session import get_db
@@ -47,7 +47,7 @@ async def post_details(
 
 
 @r.post(
-    "/posts/create",
+    "/posts",
     response_model=PostOut,
 )
 async def post_create(
@@ -94,3 +94,4 @@ async def post_update(
     """
 
     return edit_post(db, current_user, post_id, post)
+

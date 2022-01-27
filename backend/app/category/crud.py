@@ -18,6 +18,13 @@ def get_my_category(db: Session, skip: int, limit: int, user_id: int):
     return category
 
 
+def get_category(db: Session, category_id: int):
+    category = db.query(models.Categories).filter(models.Categories.id == category_id).first()
+    if not category:
+        raise HTTPException(status_code=404, detail="Category not found")
+    return category
+
+
 def create_category(db: Session, user_id: int, category: schemas.CategoryCreate):
     if category.image_id is not None:
         if not db.query(models.Categories.id).filter(models.Images.id == category.image_id).first():
@@ -47,8 +54,8 @@ def create_category(db: Session, user_id: int, category: schemas.CategoryCreate)
 #     return db_category
 
 
-def delete_category(db: Session, user_id: int, category: int):
-    category = get_my_category(db, category, user_id)
+def delete_category(db: Session, category: int):
+    category = get_category(db, category)
     if not category:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Category not found")
     db.delete(category)
@@ -56,12 +63,12 @@ def delete_category(db: Session, user_id: int, category: int):
     return category
 
 
-def edit_category(db: Session, user_id: int, category_id: int, category: schemas.CategoryEdit) -> schemas.CategoryOut:
-    db_category = get_my_category(db, category_id, user_id)
+def edit_category(db: Session, category_id: int, category: schemas.CategoryEdit) -> schemas.CategoryOut:
+    db_category = get_category(db, category_id)
     if not db_category:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Category not found")
     update_data = category.dict(exclude_unset=True)
-    if update_data["image_id"] is not None:
+    if category.image_id and update_data["image_id"] is not None:
         if not db.query(models.Categories.id).filter(models.Images.id == update_data["image_id"]).first():
             raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Image not found")
     for key, value in update_data.items():

@@ -14,7 +14,7 @@ class FileBase(BaseModel):
 
 class FileOut(FileBase):
     id: int
-    post_id: UUID
+    post_id: UUID = None
     created_at: datetime.datetime = None
     updated_at: datetime.datetime = None
 
@@ -23,7 +23,7 @@ class FileOut(FileBase):
 
 
 class FileCreate(FileBase):
-    post_id: UUID
+    post_id: UUID = None
 
     class Config:
         orm_mode = True

@@ -26,8 +26,8 @@ class PostOut(PostBase):
 
 
 class PostCreate(PostBase):
-    categories: int
-    files: int
+    categories: int = None
+    files: int = None
     #
     # class Config:
     #     orm_mode = True
