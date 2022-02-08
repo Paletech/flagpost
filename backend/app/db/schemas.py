@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from pydantic import BaseModel
 import typing as t
 
@@ -29,7 +31,7 @@ class UserEdit(UserBase):
 
 
 class User(UserBase):
-    id: int
+    id: UUID
 
     class Config:
         orm_mode = True

@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from pydantic import BaseModel
 import typing as t
 import datetime
@@ -9,9 +11,15 @@ class ImageBase(BaseModel):
 
 
 class ImageOut(ImageBase):
-    id: int
+    id: UUID
     created_at: datetime.datetime = None
     updated_at: datetime.datetime = None
+
+    class Config:
+        orm_mode = True
+
+
+class ImageCreate(ImageBase):
 
     class Config:
         orm_mode = True

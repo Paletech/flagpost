@@ -7,6 +7,7 @@ import { CategoryList, CategoryEdit, CategoryCreate } from './Categories';
 import { PostList, PostEdit, PostCreate } from './Posts';
 import { UserList, UserEdit, UserCreate } from './Users';
 import { FileList, FileCreate, FileEdit } from './Files';
+import { ImageList, ImageCreate, ImageEdit } from './Images';
 
 const httpClient = (url: any, options: any) => {
   if (!options) {
@@ -64,8 +65,13 @@ export const Admin: FC = () => {
            permissions === 'admin' ? (
           <Resource
             name="images"
+            list={ImageList}
+            edit={ImageEdit}
+            create={ImageCreate}
         />
         ) : null,
+
+
 
 
       ]}

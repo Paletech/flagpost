@@ -7,7 +7,11 @@ import {
   BooleanField,
   EmailField,
   EditButton,
-  ReferenceField
+  ReferenceField,
+  SingleFieldList,
+  ChipField,
+  ReferenceManyField,
+
 } from 'react-admin';
 
 export const PostList: FC = (props) => (
@@ -17,9 +21,11 @@ export const PostList: FC = (props) => (
       <TextField source="type" />
       <TextField source="text" />
 
-      <ReferenceField source="user_id" reference="users">
-            <TextField source="first_name" />
-      </ReferenceField>
+    <ReferenceManyField label="File" reference="files" target="post_id">
+        <SingleFieldList>
+            <ChipField source="id" />
+        </SingleFieldList>
+    </ReferenceManyField>
 
       <EditButton />
     </Datagrid>

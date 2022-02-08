@@ -7,6 +7,7 @@ import {
   BooleanInput,
   ReferenceInput,
   SelectInput,
+  ReferenceArrayInput,
   SelectArrayInput
 } from 'react-admin';
 
@@ -26,20 +27,9 @@ export const PostEdit: FC = (props) => (
             <SelectInput optionText="name" />
       </ReferenceInput>
 
-{/*       <ReferenceManyToManyInput */}
-{/*                 source="category_id" */}
-{/*                 reference="categories" */}
-{/*                 through="association_table" */}
-{/*                 using="category_id,post_id" */}
-{/*                 fullWidth */}
-{/*                 label="Categories" */}
-{/*             > */}
-{/*                 <SelectArrayInput optionText="name" /> */}
-{/*             </ReferenceManyToManyInput> */}
-
-       <ReferenceInput source="file_id" reference="files">
-            <SelectInput optionText="path" />
-      </ReferenceInput>
+        <ReferenceArrayInput source="file_id" reference="files">
+             <SelectArrayInput optionText="id" />
+        </ReferenceArrayInput>
 
     </SimpleForm>
   </Edit>

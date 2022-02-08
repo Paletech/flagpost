@@ -3,7 +3,7 @@ from uuid import UUID
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 import typing as t
-
+from sqlalchemy.sql.expression import literal
 from . import schemas
 
 from app.db import models
@@ -20,14 +20,14 @@ def get_post(db: Session, post_id: UUID):
     return post
 
 
-def get_my_post(db: Session, post_id: UUID, user_id: int):
+def get_my_post(db: Session, post_id: UUID, user_id: UUID):
     post = db.query(models.Posts).filter(models.Posts.user_id == user_id.id, models.Posts.id == post_id).first()
     if not post:
         raise HTTPException(status_code=404, detail="Post not found")
     return post
 
 
-def create_post(db: Session, user_id: int, post: schemas.PostCreate):
+def create_post(db: Session, user_id: UUID, post: schemas.PostCreate):
 
     db_post = models.Posts(
         user_id=user_id,
@@ -36,17 +36,22 @@ def create_post(db: Session, user_id: int, post: schemas.PostCreate):
     )
 
     if post.files and post.files is not None:
-        files = db.query(models.Files).get(post.files)
-        db_post.files.append(files)
-        if not db.query(models.Posts.id).filter(models.Files.id == post.files).first():
+        if not db.query(literal(True)).filter(models.Files.id == post.files).first():
             raise HTTPException(status.HTTP_404_NOT_FOUND, detail="File not found")
+        else:
+            files = db.query(models.Files).get(post.files)
+            db_post.files.append(files)
 
     if post.categories and post.categories is not None:
-        categories = db.query(models.Categories).get(post.categories)
-        db_post.categories.add(post.categories)
-        db_post.categories = [categories]
-        if not db.query(models.Posts.id).filter(models.Categories.id == post.categories).first():
+        if not db.query(literal(True)).filter(models.Categories.id == post.categories).first():
             raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Category not found")
+        else:
+            categories = db.query(models.Categories).get(post.categories)
+            # db_post.categories.add(post.categories)
+            # categories.id = str(categories.id)
+            # db_post.categories.user_id = str(categories.user_id)
+
+            db_post.categories = [categories]
 
     # files = db.query(models.Files).get(post.files)
     # categories = db.query(models.Categories).get(post.categories)
@@ -60,7 +65,7 @@ def create_post(db: Session, user_id: int, post: schemas.PostCreate):
     return db_post
 
 
-def delete_post(db: Session, user_id: int, post_id: UUID):
+def delete_post(db: Session, user_id: UUID, post_id: UUID):
     post = get_my_post(db, post_id, user_id)
     if not post:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Post not found")
@@ -69,7 +74,7 @@ def delete_post(db: Session, user_id: int, post_id: UUID):
     return post
 
 
-def edit_post(db: Session, user_id: int, post_id: UUID, post: schemas.PostBase) -> schemas.PostOut:
+def edit_post(db: Session, user_id: UUID, post_id: UUID, post: schemas.PostBase) -> schemas.PostOut:
     db_post = get_my_post(db, post_id, user_id)
     if not db_post:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Post not found")
@@ -101,3 +106,6 @@ def edit_post(db: Session, user_id: int, post_id: UUID, post: schemas.PostBase) 
     db.commit()
     db.refresh(db_post)
     return db_post
+
+
+

@@ -1,17 +1,21 @@
 import datetime
 from sqlalchemy import Boolean, Column, Integer, String, ForeignKey, DateTime, Table
 from sqlalchemy.orm import relationship
-from sqlalchemy_utils import ColorType
+# from sqlalchemy_utils import ColorType
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
 from sqlalchemy.orm import backref
 from app.db.session import Base
 
 
+def generate_uuid():
+    return str(uuid.uuid4())
+
+
 class User(Base):
     __tablename__ = "user"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=generate_uuid, unique=True)
     email = Column(String, unique=True, index=True, nullable=False)
     first_name = Column(String)
     last_name = Column(String)
@@ -32,7 +36,7 @@ association_table = Table('association', Base.metadata,
 class Categories(Base):
     __tablename__ = "category"
 
-    id = Column(Integer, primary_key=True, index=True, autoincrement=True, unique=True)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=generate_uuid, unique=True)
     category_id = Column(Integer)
     selected = Column(Integer)
     name = Column(String)
@@ -41,33 +45,34 @@ class Categories(Base):
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
 
-    image_id = Column(Integer, ForeignKey("image.id"))
-    user_id = Column(Integer, ForeignKey("user.id"), nullable=True)
+    image_id = Column(UUID(as_uuid=True), ForeignKey("image.id"))
+    user_id = Column(UUID(as_uuid=True), ForeignKey("user.id"), nullable=True)
 
-    image = relationship("Images", backref=backref("category", uselist=False))
     post = relationship("Posts", secondary=association_table, back_populates="categories")
 
 
 class Images(Base):
     __tablename__ = "image"
 
-    id = Column(Integer, primary_key=True, index=True, autoincrement=True, unique=True)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=generate_uuid, unique=True)
     path = Column(String)
     public_path = Column(String)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
 
+    categories = relationship("Categories")
+
 
 class Posts(Base):
     __tablename__ = "post"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=generate_uuid, unique=True)
     type = Column(String)
     text = Column(String)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
 
-    user_id = Column(Integer, ForeignKey("user.id"))
+    user_id = Column(UUID(as_uuid=True), ForeignKey("user.id"))
 
     files = relationship("Files")
     categories = relationship("Categories", secondary=association_table, back_populates="post")
@@ -76,7 +81,7 @@ class Posts(Base):
 class Files(Base):
     __tablename__ = "file"
 
-    id = Column(Integer, primary_key=True, index=True, autoincrement=True, unique=True)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=generate_uuid, unique=True)
     width = Column(Integer)
     height = Column(Integer)
     path = Column(String)

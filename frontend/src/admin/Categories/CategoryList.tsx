@@ -17,7 +17,11 @@ export const CategoryList: FC = (props) => (
       <TextField source="name" />
       <TextField source="color" />
       <BooleanField source="selected" />
-      <TextField source="image.path" label="Image Path"/>
+
+
+      <ReferenceField source="image_id" reference="images">
+            <TextField source="path" />
+      </ReferenceField>
 
       <ReferenceField source="user_id" reference="users">
             <TextField source="first_name" />

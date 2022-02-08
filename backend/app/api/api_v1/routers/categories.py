@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from fastapi import APIRouter, Request, Depends, Response, encoders
 import typing as t
 
@@ -38,7 +40,7 @@ async def categories_list(
 )
 async def category_details(
         request: Request,
-        category_id: int,
+        category_id: UUID,
         db=Depends(get_db),
         current_user=Depends(get_current_user),
 ):
@@ -49,7 +51,7 @@ async def category_details(
 
 
 @r.get(
-    "/categories/my",
+    "/categories/my/",
     response_model=t.List[CategoryOut],
 )
 async def categories_details(
@@ -75,7 +77,7 @@ async def categories_details(
 #         request: Request,
 #         category_id: int,
 #         db=Depends(get_db),
-#         # current_user=Depends(get_current_active_superuser),
+#         current_user=Depends(get_current_active_superuser),
 # ):
 #     """
 #     Choose category
@@ -104,7 +106,7 @@ async def category_create(
 )
 async def categories_delete(
         request: Request,
-        category_id: int,
+        category_id: UUID,
         db=Depends(get_db),
         current_user=Depends(get_current_user),
 ):
@@ -122,7 +124,7 @@ async def categories_delete(
 async def categories_update(
         request: Request,
         category: CategoryEdit,
-        category_id: int,
+        category_id: UUID,
         db=Depends(get_db),
         current_user=Depends(get_current_user),
 ):

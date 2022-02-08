@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from fastapi import APIRouter, Request, Depends, Response, encoders
 import typing as t
 
@@ -49,7 +51,7 @@ async def user_me(current_user=Depends(get_current_active_user)):
 )
 async def user_details(
     request: Request,
-    user_id: int,
+    user_id: UUID,
     db=Depends(get_db),
     current_user=Depends(get_current_active_superuser),
 ):
@@ -81,7 +83,7 @@ async def user_create(
 )
 async def user_edit(
     request: Request,
-    user_id: int,
+    user_id: UUID,
     user: UserEdit,
     db=Depends(get_db),
     current_user=Depends(get_current_active_superuser),
@@ -97,7 +99,7 @@ async def user_edit(
 )
 async def user_delete(
     request: Request,
-    user_id: int,
+    user_id: UUID,
     db=Depends(get_db),
     current_user=Depends(get_current_active_superuser),
 ):

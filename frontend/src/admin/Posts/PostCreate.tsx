@@ -6,7 +6,8 @@ import {
   BooleanInput,
   ReferenceInput,
   SelectInput,
-
+  ReferenceArrayInput,
+  SelectArrayInput,
   ReferenceField,
   TextField
 
@@ -15,13 +16,21 @@ import {
 export const PostCreate: FC = (props) => (
   <Create {...props}>
     <SimpleForm>
-      <TextInput disabled source="id" />
       <TextInput source="type" />
       <TextInput source="text" />
 
       <ReferenceInput source="user_id" reference="users">
             <SelectInput optionText="first_name" />
       </ReferenceInput>
+       <ReferenceInput source="category_id" reference="categories">
+            <SelectInput optionText="name" />
+      </ReferenceInput>
+
+      <ReferenceArrayInput source="file_id" reference="files">
+            <SelectArrayInput optionText="id" />
+      </ReferenceArrayInput>
+
+
     </SimpleForm>
   </Create>
 );

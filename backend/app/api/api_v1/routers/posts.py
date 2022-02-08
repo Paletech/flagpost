@@ -1,7 +1,7 @@
 import typing as t
 from uuid import UUID
 
-from fastapi import APIRouter, Request, Depends, Response, UploadFile, File
+from fastapi import APIRouter, Request, Depends, Response
 
 from app.core.auth import get_current_user
 from app.db.session import get_db

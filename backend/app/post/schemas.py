@@ -15,7 +15,7 @@ class PostBase(BaseModel):
 
 class PostOut(PostBase):
     id: UUID = None
-    user_id: int = None
+    user_id: UUID = None
     created_at: datetime.datetime = None
     updated_at: datetime.datetime = None
     files: Optional[List[FileOut]] = []
@@ -26,15 +26,15 @@ class PostOut(PostBase):
 
 
 class PostCreate(PostBase):
-    categories: int = None
-    files: int = None
+    categories: UUID = None
+    files: UUID = None
     #
     # class Config:
     #     orm_mode = True
 
 
 class PostEdit(PostBase):
-    id: int
+    id: UUID
 
     class Config:
         orm_mode = True

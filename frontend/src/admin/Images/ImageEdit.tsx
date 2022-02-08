@@ -1,20 +1,17 @@
 import React, { FC } from 'react';
 import {
-  Create,
+  Edit,
   SimpleForm,
   TextInput,
-  PasswordInput,
-  BooleanInput,
+
 } from 'react-admin';
 
-export const FileCreate: FC = (props) => (
-  <Create {...props}>
+export const ImageEdit: FC = (props) => (
+  <Edit {...props}>
     <SimpleForm>
-      <TextInput source="width" />
-      <TextInput source="height" />
       <TextInput source="path" />
       <TextInput source="public_path" />
 
     </SimpleForm>
-  </Create>
+  </Edit>
 );

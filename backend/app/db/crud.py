@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 import typing as t
@@ -6,7 +8,7 @@ from . import models, schemas
 from app.core.security import get_password_hash
 
 
-def get_user(db: Session, user_id: int):
+def get_user(db: Session, user_id: UUID):
     user = db.query(models.User).filter(models.User.id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
@@ -39,7 +41,7 @@ def create_user(db: Session, user: schemas.UserCreate):
     return db_user
 
 
-def delete_user(db: Session, user_id: int):
+def delete_user(db: Session, user_id: UUID):
     user = get_user(db, user_id)
     if not user:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="User not found")
@@ -49,7 +51,7 @@ def delete_user(db: Session, user_id: int):
 
 
 def edit_user(
-    db: Session, user_id: int, user: schemas.UserEdit
+    db: Session, user_id: UUID, user: schemas.UserEdit
 ) -> schemas.User:
     db_user = get_user(db, user_id)
     if not db_user:
