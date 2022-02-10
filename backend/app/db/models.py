@@ -46,6 +46,8 @@ class Categories(Base):
     updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
 
     image_id = Column(UUID(as_uuid=True), ForeignKey("image.id"))
+    image = relationship("Images")
+
     user_id = Column(UUID(as_uuid=True), ForeignKey("user.id"), nullable=True)
 
     post = relationship("Posts", secondary=association_table, back_populates="categories")
@@ -60,7 +62,7 @@ class Images(Base):
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
 
-    categories = relationship("Categories")
+    # categories = relationship("Categories")
 
 
 class Posts(Base):

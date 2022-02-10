@@ -1,3 +1,5 @@
+import base64
+import json
 import typing as t
 from uuid import UUID
 
@@ -49,9 +51,8 @@ async def images_details(
     "/images",
 )
 async def image_upload(
-        # request: Request,
+        request: Request,
         # file: UploadFile = File(...),
-        # file: str,
         db=Depends(get_db),
         current_user=Depends(get_current_user),
 ):
@@ -62,11 +63,10 @@ async def image_upload(
     # path = response.pop('data_for_base')
     # create_file(db, post_id, path)
 
-    file_location = f"files/{file.filename}"
-    with open(file_location, "wb+") as file_object:
-        file_object.write(file.file.read())
-    # return image
-
+    # print(await request.json(), "JSON")
+    data = await request.json()
+    # print(await request.body(), "BODY")
+    print(data)
 
 @r.delete(
     "/images/{image_id}",
