@@ -7,9 +7,6 @@ import {
   ReferenceInput,
   SelectInput,
 
-  ReferenceField,
-  TextField
-
 } from 'react-admin';
 
 export const CategoryCreate: FC = (props) => (

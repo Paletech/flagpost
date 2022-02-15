@@ -3,7 +3,6 @@ import {
   Edit,
   SimpleForm,
   TextInput,
-  PasswordInput,
   BooleanInput,
   ReferenceInput,
   SelectInput

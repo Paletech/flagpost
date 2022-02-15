@@ -1,14 +1,13 @@
 import typing as t
 from uuid import UUID
 
-from fastapi import APIRouter, Request, Depends, Response, UploadFile, File
+from fastapi import APIRouter, Depends, UploadFile, File, Response
 
 from app.core.auth import get_current_user
 from app.core.upload_data import upload_to_s3
 from app.db.session import get_db
 from app.files.crud import get_all_files, get_file, create_file, delete_file
-from app.files.schemas import FileOut, FileCreate, FileUpload
-from app.post.crud import delete_post
+from app.files.schemas import FileOut
 
 files_router = r = APIRouter()
 
@@ -35,7 +34,6 @@ async def files_list(
     response_model=FileOut,
 )
 async def files_details(
-        request: Request,
         file_id: UUID,
         db=Depends(get_db),
         current_user=Depends(get_current_user),
@@ -43,31 +41,14 @@ async def files_details(
     """
     Get files by id
     """
-    file = get_file(db, file_id)
+    file = get_file(db, file_id=file_id)
     return file
-
-
-# @r.post(
-#     "/files/create",
-#     response_model=FileOut,
-# )
-# async def file_create(
-#         request: Request,
-#         file: FileCreate,
-#         db=Depends(get_db),
-#         current_user=Depends(get_current_user),
-# ):
-#     """
-#     Create file
-#     """
-#     return create_file(db, file)
 
 
 @r.post(
     "/upload_file/{post_id}",
 )
 async def post_upload_file(
-        # request: Request,
         post_id: UUID,
         file: UploadFile = File(...),
         db=Depends(get_db),
@@ -76,9 +57,9 @@ async def post_upload_file(
     """
     Upload file
     """
-    response = upload_to_s3(file, current_user, post_id)
+    response = upload_to_s3(file=file, user=current_user, post_id=post_id)
     path = response.pop('data_for_base')
-    create_file(db, post_id, path)
+    create_file(db, post_id=post_id, path=path)
     return response['response']['fields']
 
 
@@ -86,7 +67,6 @@ async def post_upload_file(
     "/files/{file_id}",
 )
 async def file_delete(
-        request: Request,
         file_id: UUID,
         db=Depends(get_db),
         current_user=Depends(get_current_user),
@@ -94,7 +74,7 @@ async def file_delete(
     """
     Delete file
     """
-    delete_file(db, file_id)
+    delete_file(db, file=file_id)
     return {"status": True}
 
 

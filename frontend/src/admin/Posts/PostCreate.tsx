@@ -3,13 +3,10 @@ import {
   Create,
   SimpleForm,
   TextInput,
-  BooleanInput,
   ReferenceInput,
   SelectInput,
   ReferenceArrayInput,
-  SelectArrayInput,
-  ReferenceField,
-  TextField
+  SelectArrayInput
 
 } from 'react-admin';
 

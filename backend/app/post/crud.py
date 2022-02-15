@@ -1,12 +1,12 @@
+import typing as t
 from uuid import UUID
 
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
-import typing as t
 from sqlalchemy.sql.expression import literal
-from . import schemas
 
 from app.db import models
+from . import schemas
 
 
 def get_all_posts(db: Session, skip: int = 0, limit: int = 100) -> t.List[schemas.PostOut]:
@@ -79,25 +79,19 @@ def edit_post(db: Session, user_id: UUID, post_id: UUID, post: schemas.PostBase)
     if not db_post:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Post not found")
     update_data = post.dict(exclude_unset=True)
-    if update_data["files"] is not None:
+    if 'files' in update_data and update_data["files"] is not None:
         if not db.query(models.Posts.id).filter(models.Files.id == update_data["files"]).first():
             raise HTTPException(status.HTTP_404_NOT_FOUND, detail="File not found")
+        else:
+            files = db.query(models.Files).get(update_data.pop("files"))
+            db_post.files.append(files)
 
-    if update_data["categories"] is not None:
+    if 'categories' in update_data and update_data["categories"] is not None:
         if not db.query(models.Posts.id).filter(models.Categories.id == update_data["categories"]).first():
             raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Category not found")
-
-    files = db.query(models.Files).get(update_data.pop("files"))
-    categories = db.query(models.Categories).get(update_data.pop("categories"))
-    db_post.categories = [categories]
-    db_post.files.append(files)
-
-
-    # files = db.query(models.Files).get(update_data.pop("files"))
-    # db_post.files = files
-    # update_data.pop("files")
-
-    # db_post.categories = update_data.pop("categories")
+        else:
+            categories = db.query(models.Categories).get(update_data.pop("categories"))
+            db_post.categories = [categories]
 
     for key, value in update_data.items():
         setattr(db_post, key, value)
@@ -106,6 +100,3 @@ def edit_post(db: Session, user_id: UUID, post_id: UUID, post: schemas.PostBase)
     db.commit()
     db.refresh(db_post)
     return db_post
-
-
-

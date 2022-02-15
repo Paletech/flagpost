@@ -18,7 +18,7 @@ class CategoryOut(CategoryBase):
     selected: int = None
     created_at: datetime.datetime = None
     updated_at: datetime.datetime = None
-    image: ImageOut
+    image: ImageOut = None
 
     class Config:
         orm_mode = True

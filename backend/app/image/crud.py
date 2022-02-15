@@ -7,6 +7,7 @@ import typing as t
 from . import schemas
 
 from app.db import models
+from ..core.upload_data import delete_file_from_s3
 
 
 def get_all_images(db: Session, skip: int = 0, limit: int = 100) -> t.List[schemas.ImageOut]:
@@ -20,10 +21,10 @@ def get_image(db: Session, image_id: UUID):
     return image
 
 
-def create_image(db: Session, post_id, path):
+def create_image(db: Session, path):
     db_image = models.Images(
         path=path,
-        post_id=post_id,
+        public_path=path
     )
 
     db.add(db_image)
@@ -32,8 +33,9 @@ def create_image(db: Session, post_id, path):
     return db_image
 
 
-def delete_image(db: Session, image: UUID):
-    image = get_image(db, image)
+def delete_image(db: Session, image_id: UUID):
+    image = get_image(db, image_id)
+    delete_file_from_s3(image.path)
     if not image:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="File not found")
     db.delete(image)

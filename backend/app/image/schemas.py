@@ -1,7 +1,7 @@
+from fastapi import File, UploadFile
+from typing import Optional, List, Dict
 from uuid import UUID
-
 from pydantic import BaseModel
-import typing as t
 import datetime
 
 
@@ -23,3 +23,14 @@ class ImageCreate(ImageBase):
 
     class Config:
         orm_mode = True
+
+
+class ImageUpload(BaseModel):
+    # file = File
+    # file: Optional[UploadFile] = File(...)
+    pictures: List
+    # pictures: str
+    # pictures: Dict
+
+
+

@@ -5,7 +5,6 @@ import {
   Datagrid,
   TextField,
   BooleanField,
-  EmailField,
   EditButton,
 } from 'react-admin';
 

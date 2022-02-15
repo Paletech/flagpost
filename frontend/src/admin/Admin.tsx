@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import { fetchUtils, Admin as ReactAdmin, Resource } from 'react-admin';
 import simpleRestProvider from 'ra-data-simple-rest';
 import authProvider from './authProvider';
+import dataProvider from './dataProvider';
 
 import { CategoryList, CategoryEdit, CategoryCreate } from './Categories';
 import { PostList, PostEdit, PostCreate } from './Posts';
@@ -9,19 +10,19 @@ import { UserList, UserEdit, UserCreate } from './Users';
 import { FileList, FileCreate, FileEdit } from './Files';
 import { ImageList, ImageCreate, ImageEdit } from './Images';
 
-const httpClient = (url: any, options: any) => {
-  if (!options) {
-    options = {};
-  }
-  if (!options.headers) {
-    options.headers = new Headers({ Accept: 'application/json' });
-  }
-  const token = localStorage.getItem('token');
-  options.headers.set('Authorization', `Bearer ${token}`);
-  return fetchUtils.fetchJson(url, options);
-};
-
-const dataProvider = simpleRestProvider('api/v1', httpClient);
+// const httpClient = (url: any, options: any) => {
+//   if (!options) {
+//     options = {};
+//   }
+//   if (!options.headers) {
+//     options.headers = new Headers({ Accept: 'application/json' });
+//   }
+//   const token = localStorage.getItem('token');
+//   options.headers.set('Authorization', `Bearer ${token}`);
+//   return fetchUtils.fetchJson(url, options);
+// };
+//
+// const dataProvider = simpleRestProvider('api/v1', httpClient);
 
 export const Admin: FC = () => {
   return (
@@ -57,8 +58,8 @@ export const Admin: FC = () => {
           <Resource
             name="files"
             list={FileList}
-            edit={FileEdit}
-            create={FileCreate}
+//             edit={FileEdit}
+//             create={FileCreate}
         />
         ) : null,
 
