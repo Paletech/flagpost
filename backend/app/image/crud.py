@@ -33,9 +33,7 @@ def create_image(db: Session, path):
     return db_image
 
 
-def delete_image(db: Session, image_id: UUID):
-    image = get_image(db, image_id)
-    delete_file_from_s3(image.path)
+def delete_image(db: Session, image: UUID):
     if not image:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="File not found")
     db.delete(image)

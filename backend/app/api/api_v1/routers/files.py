@@ -57,7 +57,7 @@ async def post_upload_file(
     """
     Upload file
     """
-    response = upload_to_s3(file=file, user=current_user, post_id=post_id)
+    response = await upload_to_s3(file=file, user=current_user, post_id=post_id)
     path = response.pop('data_for_base')
     create_file(db, post_id=post_id, path=path)
     return response['response']['fields']
@@ -74,7 +74,7 @@ async def file_delete(
     """
     Delete file
     """
-    delete_file(db, file=file_id)
+    delete_file(db, file=file_id, user_id=current_user)
     return {"status": True}
 
 

@@ -17,6 +17,17 @@ def get_file(db: Session, file_id: UUID):
         raise HTTPException(status_code=404, detail="File not found")
     return file
 
+#TODO join
+def get_my_file(db: Session, file_id: UUID, user_id: UUID):
+    post = db.query(models.Posts.id).filter(models.Posts.user_id == user_id.id).all()
+    ids = [id[0] for id in post]
+
+    file_to_user = (db.query(literal(True)).filter(models.Files.post_id.in_(ids)).first())
+
+    if file_to_user is None:
+        raise HTTPException(status_code=404, detail="File not found")
+    return db.query(models.Files).filter(models.Files.id == file_id).first()
+
 
 def create_file(db: Session, post_id, path):
     if post_id is not None:
@@ -34,8 +45,8 @@ def create_file(db: Session, post_id, path):
     return db_files
 
 
-def delete_file(db: Session, file: UUID):
-    file = get_file(db, file)
+def delete_file(db: Session, file: UUID, user_id: UUID):
+    file = get_my_file(db, file, user_id)
     if not file:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="File not found")
     db.delete(file)

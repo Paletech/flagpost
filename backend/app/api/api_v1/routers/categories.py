@@ -3,8 +3,8 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, Response
 
-from app.category.crud import get_all_categories, get_my_category, create_category, delete_category, edit_category, \
-    get_category
+from app.category.crud import get_all_categories, create_category, delete_category, edit_category, \
+    get_category, get_my_categories
 from app.category.schemas import CategoryOut, CategoryCreate, CategoryEdit
 from app.core.auth import get_current_user
 from app.db.session import get_db
@@ -59,7 +59,7 @@ async def categories_details(
     """
     Get my category
     """
-    category = get_my_category(db, skip, limit, user_id=current_user)
+    category = get_my_categories(db, skip, limit, user_id=current_user)
     return category
 
 
@@ -105,7 +105,7 @@ async def categories_delete(
     """
     Delete category
     """
-    return delete_category(db, category=category_id)
+    return delete_category(db, category_id=category_id, user_id=current_user)
 
 
 @r.put(
@@ -121,5 +121,4 @@ async def categories_update(
     """
     Update category
     """
-    return edit_category(db, category_id=category_id, category=category)
-
+    return edit_category(db, category_id=category_id, category=category, user_id=current_user)

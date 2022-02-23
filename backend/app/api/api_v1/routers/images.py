@@ -5,7 +5,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, Response
 
 from app.core.auth import get_current_user
-from app.core.upload_data import upload_image_to_s3
+from app.core.upload_data import upload_image_to_s3, delete_file_from_s3
 from app.db.session import get_db
 from app.image.crud import get_all_images, get_image, delete_image, create_image
 from app.image.schemas import ImageOut, ImageUpload
@@ -63,7 +63,7 @@ async def image_upload(
     filename = pictures.pictures[0].get('title')
     file = base64.b64decode(img_data)
 
-    url = upload_image_to_s3(file=file, filename=filename)
+    url = await upload_image_to_s3(file=file, filename=filename)
     create_image(db, url)
     return url
 
@@ -79,8 +79,8 @@ async def image_delete(
     """
     Delete image
     """
-    delete_image(db, image_id=image_id)
+
+    image = get_image(db, image_id)
+    await delete_file_from_s3(image.path)
+    delete_image(db, image=image)
     return {"status": True}
-
-
-
