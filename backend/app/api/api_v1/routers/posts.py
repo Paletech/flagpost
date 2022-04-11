@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, Response
 from app.core.auth import get_current_user
 from app.db.session import get_db
 from app.post.crud import get_all_posts, get_post, create_post, delete_post, edit_post
-from app.post.schemas import PostOut, PostCreate
+from app.post.schemas import PostOut, PostCreate, PostEdit
 
 posts_router = r = APIRouter()
 
@@ -80,7 +80,7 @@ async def post_delete(
     response_model=PostOut
 )
 async def post_update(
-        post: PostCreate,
+        post: PostEdit,
         post_id: UUID,
         db=Depends(get_db),
         current_user=Depends(get_current_user),
@@ -88,5 +88,4 @@ async def post_update(
     """
     Update post
     """
-
     return edit_post(db, user_id=current_user, post_id=post_id, post=post)

@@ -44,16 +44,14 @@ export const Admin: FC = () => {
             create={CategoryCreate}
         />
         ) : null,
-
-          permissions === 'admin' ? (
+        permissions === 'admin' ? (
           <Resource
             name="posts"
             list={PostList}
-            edit={PostEdit}
+//             edit={PostEdit}
             create={PostCreate}
         />
         ) : null,
-
           permissions === 'admin' ? (
           <Resource
             name="files"
@@ -71,10 +69,6 @@ export const Admin: FC = () => {
             create={ImageCreate}
         />
         ) : null,
-
-
-
-
       ]}
     </ReactAdmin>
   );

@@ -26,15 +26,17 @@ class PostOut(PostBase):
 
 
 class PostCreate(PostBase):
-    categories: UUID = None
-    files: UUID = None
+    categories: Optional[List[UUID]] = None
+    files: Optional[List[UUID]] = None
     #
     # class Config:
     #     orm_mode = True
 
 
 class PostEdit(PostBase):
-    id: UUID
+    # id: UUID
+    categories: Optional[List[UUID]] = None
+    files: Optional[List[UUID]] = None
 
     class Config:
         orm_mode = True

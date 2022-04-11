@@ -102,8 +102,8 @@ def test_create_post(client, test_categories, test_files, test_superuser, superu
     data = {
         "type": "new_type",
         "text": "new_text",
-        "categories": str(test_categories.id),
-        "files": str(test_files.id)
+        "categories": [str(test_categories.id)],
+        "files": [str(test_files.id)]
     }
 
     json_data = json.dumps(data)

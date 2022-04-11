@@ -20,8 +20,8 @@ export const CategoryCreate: FC = (props) => (
             <SelectInput optionText="first_name" />
       </ReferenceInput>
 
-      <ReferenceInput label="Image" source="image_id" reference="categories">
-            <SelectInput optionText="image.path" />
+      <ReferenceInput label="Image" source="image_id" reference="images">
+            <SelectInput optionText="path" />
       </ReferenceInput>
 
 
