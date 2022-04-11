@@ -2,4 +2,3 @@
 exclude=env,alembic
 max-line-length=127
 count=True
-ignore=static

@@ -67,7 +67,7 @@ def test_post_not_found(client, superuser_token_headers):
 def test_create_file(client, test_posts, test_superuser, superuser_token_headers):
     response = client.post(f"/api/v1/upload_file/{str(test_posts.id)}",
                            headers=superuser_token_headers,
-                           files={"file": ("filename", open('app/api/api_v1/routers/tests/image/image.png', "rb"),
+                           files={"file": ("filename", open('backend/app/api/api_v1/routers/tests/image/image.png', "rb"),
                                            "image/jpeg")})
     assert response.status_code == 200
 
