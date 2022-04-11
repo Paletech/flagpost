@@ -1,6 +1,3 @@
-import datetime
-import json
-import base64
 from app.db import models
 
 
@@ -40,12 +37,11 @@ def test_get_image(client, test_images, superuser_token_headers,):
     )
     assert response.status_code == 200
     assert response.json() == {
-            "id": str(test_images.id),
-            "path": str(test_images.path),
-            "public_path": test_images.public_path,
-            "created_at": '2022-02-21T14:00:17.961523',
-            "updated_at": '2022-02-21T14:00:17.961523',
-
+        "id": str(test_images.id),
+        "path": str(test_images.path),
+        "public_path": test_images.public_path,
+        "created_at": '2022-02-21T14:00:17.961523',
+        "updated_at": '2022-02-21T14:00:17.961523',
     }
 
 # def test_create_image(client, test_posts, test_superuser, superuser_token_headers):

@@ -4,7 +4,7 @@ from sqlalchemy.orm import relationship
 # from sqlalchemy_utils import ColorType
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
-from sqlalchemy.orm import backref
+# from sqlalchemy.orm import backref
 from app.db.session import Base
 
 
@@ -28,9 +28,9 @@ class User(Base):
 
 
 association_table = Table('association', Base.metadata,
-    Column('category_id', ForeignKey('category.id'), primary_key=True),
-    Column('post_id', ForeignKey('post.id'), primary_key=True)
-)
+                          Column('category_id', ForeignKey('category.id'), primary_key=True),
+                          Column('post_id', ForeignKey('post.id'), primary_key=True)
+                          )
 
 
 class Categories(Base):

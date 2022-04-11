@@ -1,4 +1,3 @@
-import datetime
 import json
 
 from app.db import models
@@ -87,14 +86,14 @@ def test_get_post(client, test_posts, superuser_token_headers,):
     )
     assert response.status_code == 200
     assert response.json() == {
-            "id": str(test_posts.id),
-            "type": test_posts.type,
-            "text": test_posts.text,
-            "user_id": str(test_posts.user_id),
-            "files": [],
-            "categories": [],
-            "created_at": '2022-02-21T14:00:17.961523',
-            "updated_at": '2022-02-21T14:00:17.961523',
+        "id": str(test_posts.id),
+        "type": test_posts.type,
+        "text": test_posts.text,
+        "user_id": str(test_posts.user_id),
+        "files": [],
+        "categories": [],
+        "created_at": '2022-02-21T14:00:17.961523',
+        "updated_at": '2022-02-21T14:00:17.961523',
     }
 
 
@@ -107,7 +106,10 @@ def test_create_post(client, test_categories, test_files, test_superuser, superu
     }
 
     json_data = json.dumps(data)
-    response = client.post("/api/v1/posts", data=json_data, headers={'Content-Type': 'application/json', 'Authorization': superuser_token_headers.get('Authorization')})
+    response = client.post("/api/v1/posts", data=json_data, headers={
+        'Content-Type': 'application/json',
+        'Authorization': superuser_token_headers.get('Authorization')
+    })
     assert response.status_code == 200
 
     data["user_id"] = str(test_superuser.id)

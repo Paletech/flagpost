@@ -7,7 +7,7 @@ import typing as t
 from . import schemas
 
 from app.db import models
-from ..core.upload_data import delete_file_from_s3
+# from ..core.upload_data import delete_file_from_s3  # TODO
 
 
 def get_all_images(db: Session, skip: int = 0, limit: int = 100) -> t.List[schemas.ImageOut]:

@@ -76,6 +76,3 @@ async def file_delete(
     """
     delete_file(db, file=file_id, user_id=current_user)
     return {"status": True}
-
-
-

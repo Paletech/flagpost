@@ -95,7 +95,7 @@ async def category_create(
 
 
 @r.delete(
-    "/categories/{category_id}",  response_model=CategoryOut, response_model_exclude_none=True
+    "/categories/{category_id}", response_model=CategoryOut, response_model_exclude_none=True
 )
 async def categories_delete(
         category_id: UUID,

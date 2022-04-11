@@ -21,7 +21,8 @@ def get_my_categories(db: Session, skip: int, limit: int, user_id: UUID):
 
 
 def get_my_category(db: Session, category_id: UUID, user_id: UUID):
-    category = db.query(models.Categories).filter(models.Categories.user_id == user_id.id, models.Categories.id == category_id).first()
+    category = db.query(models.Categories).filter(models.Categories.user_id == user_id.id,
+                                                  models.Categories.id == category_id).first()
     if not category:
         raise HTTPException(status_code=404, detail="Category not found")
     return category
@@ -31,7 +32,8 @@ def get_admin_category(db: Session, category_id: UUID, user_id: UUID):
 
     if db.query(models.User.is_superuser).filter_by(id=user_id.id).scalar():
 
-        category = db.query(models.Categories).filter(models.Categories.user_id == user_id.id, models.Categories.id == category_id).first()
+        category = db.query(models.Categories).filter(models.Categories.user_id == user_id.id,
+                                                      models.Categories.id == category_id).first()
         if not category:
             raise HTTPException(status_code=404, detail="Category not found")
         return category

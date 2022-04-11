@@ -1,8 +1,9 @@
-from fastapi import File, UploadFile
-from typing import Optional, List, Dict
-from uuid import UUID
-from pydantic import BaseModel
+# from fastapi import File, UploadFile
 import datetime
+from typing import List
+from uuid import UUID
+
+from pydantic import BaseModel
 
 
 class ImageBase(BaseModel):
@@ -26,11 +27,4 @@ class ImageCreate(ImageBase):
 
 
 class ImageUpload(BaseModel):
-    # file = File
-    # file: Optional[UploadFile] = File(...)
     pictures: List
-    # pictures: str
-    # pictures: Dict
-
-
-

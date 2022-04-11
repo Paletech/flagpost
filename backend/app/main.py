@@ -1,7 +1,8 @@
+import uvicorn
 from fastapi import FastAPI, Depends
 from starlette.requests import Request
-import uvicorn
 
+from app.api.api_v1.routers.auth import auth_router
 # from mangum import Mangum
 # from api.api_v1.routers.jobs import jobs_router
 from app.api.api_v1.routers.categories import categories_router
@@ -9,12 +10,11 @@ from app.api.api_v1.routers.files import files_router
 from app.api.api_v1.routers.images import images_router
 from app.api.api_v1.routers.posts import posts_router
 from app.api.api_v1.routers.users import users_router
-from app.api.api_v1.routers.auth import auth_router
 from app.core import config
-from app.db.session import SessionLocal
 from app.core.auth import get_current_active_user
 from app.core.celery_app import celery_app
-from app import tasks
+from app.db.session import SessionLocal
+
 # import sqltap
 
 app = FastAPI(
@@ -22,7 +22,7 @@ app = FastAPI(
 )
 
 
-#TODO
+# TODO
 # TODO for debug db requests
 # @app.middleware("http")
 # async def add_sql_tap(request: Request, call_next):

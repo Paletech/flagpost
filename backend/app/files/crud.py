@@ -17,7 +17,8 @@ def get_file(db: Session, file_id: UUID):
         raise HTTPException(status_code=404, detail="File not found")
     return file
 
-#TODO join
+
+# TODO join
 def get_my_file(db: Session, file_id: UUID, user_id: UUID):
     post = db.query(models.Posts.id).filter(models.Posts.user_id == user_id.id).all()
     ids = [id[0] for id in post]

@@ -12,7 +12,8 @@ from . import schemas
 
 # TODO joinedload works
 def get_all_posts(db: Session, skip: int = 0, limit: int = 100) -> t.List[schemas.PostOut]:
-    return db.query(models.Posts).options(joinedload(models.Posts.files), joinedload(models.Posts.categories)).offset(skip).limit(limit).all()
+    return db.query(models.Posts).options(joinedload(models.Posts.files),
+                                          joinedload(models.Posts.categories)).offset(skip).limit(limit).all()
 
 
 def get_post(db: Session, post_id: UUID):

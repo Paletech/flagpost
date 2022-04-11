@@ -1,4 +1,3 @@
-import datetime
 import json
 
 from app.db import models
@@ -71,12 +70,12 @@ def test_edit_category(client, test_categories, test_superuser, superuser_token_
 
 def test_edit_category_not_found(client, test_db, test_superuser, superuser_token_headers):
     new_categories = {
-       "color": "white",
-       "name": "test_category2",
-       "user_id": str(test_superuser.id),
-       "category_id": None,
-       "selected": 0,
-       "created_at": '2022-02-21T14:00:17.961523',
+        "color": "white",
+        "name": "test_category2",
+        "user_id": str(test_superuser.id),
+        "category_id": None,
+        "selected": 0,
+        "created_at": '2022-02-21T14:00:17.961523',
     }
     response = client.put(
         "/api/v1/categories/4f58bd00-5bc1-4aea-9c4b-8ddb23b6016b", json=new_categories, headers=superuser_token_headers
@@ -131,7 +130,12 @@ def test_create_categories(client, test_categories, test_images, test_superuser,
     }
 
     new = json.dumps(data)
-    response = client.post("/api/v1/categories", data=new, headers={'Content-Type': 'application/json', 'Authorization': superuser_token_headers.get('Authorization')})
+    response = client.post("/api/v1/categories",
+                           data=new,
+                           headers={
+                               'Content-Type': 'application/json',
+                               'Authorization': superuser_token_headers.get('Authorization')
+                           })
     assert response.status_code == 200
 
     data["category_id"] = None
