@@ -1,5 +1,7 @@
 from app.db import models
 
+from pytest import fixture
+
 
 def test_get_images(client, test_images, superuser_token_headers):
     response = client.get("/api/v1/images")
@@ -16,6 +18,7 @@ def test_get_images(client, test_images, superuser_token_headers):
     ]
 
 
+@fixture(scope='function')
 def test_delete_image(client, test_images, test_db, superuser_token_headers):
     response = client.delete(
         f"/api/v1/images/{test_images.id}", headers=superuser_token_headers
