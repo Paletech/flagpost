@@ -1,0 +1,4 @@
+[flake8]
+exclude=env,alembic
+max-line-length=127
+count=True

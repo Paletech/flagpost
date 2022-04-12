@@ -5,7 +5,6 @@ import {
   Datagrid,
   TextField,
   BooleanField,
-  EmailField,
   EditButton,
 } from 'react-admin';
 
@@ -17,7 +16,7 @@ export const FileList: FC = (props) => (
       <TextField source="height" />
       <TextField source="path" />
       <BooleanField source="public_path" />
-      <EditButton />
+{/*      <EditButton /> */}
     </Datagrid>
   </List>
 );

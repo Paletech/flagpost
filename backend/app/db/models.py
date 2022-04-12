@@ -4,7 +4,7 @@ from sqlalchemy.orm import relationship
 # from sqlalchemy_utils import ColorType
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
-from sqlalchemy.orm import backref
+# from sqlalchemy.orm import backref
 from app.db.session import Base
 
 
@@ -28,9 +28,9 @@ class User(Base):
 
 
 association_table = Table('association', Base.metadata,
-    Column('category_id', ForeignKey('category.id'), primary_key=True),
-    Column('post_id', ForeignKey('post.id'), primary_key=True)
-)
+                          Column('category_id', ForeignKey('category.id'), primary_key=True),
+                          Column('post_id', ForeignKey('post.id'), primary_key=True)
+                          )
 
 
 class Categories(Base):
@@ -46,6 +46,8 @@ class Categories(Base):
     updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
 
     image_id = Column(UUID(as_uuid=True), ForeignKey("image.id"))
+    image = relationship("Images")
+
     user_id = Column(UUID(as_uuid=True), ForeignKey("user.id"), nullable=True)
 
     post = relationship("Posts", secondary=association_table, back_populates="categories")
@@ -60,7 +62,7 @@ class Images(Base):
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
 
-    categories = relationship("Categories")
+    # categories = relationship("Categories")
 
 
 class Posts(Base):

@@ -1,24 +1,36 @@
+import uvicorn
 from fastapi import FastAPI, Depends
 from starlette.requests import Request
-import uvicorn
 
+from app.api.api_v1.routers.auth import auth_router
+# from mangum import Mangum
 # from api.api_v1.routers.jobs import jobs_router
 from app.api.api_v1.routers.categories import categories_router
 from app.api.api_v1.routers.files import files_router
 from app.api.api_v1.routers.images import images_router
 from app.api.api_v1.routers.posts import posts_router
 from app.api.api_v1.routers.users import users_router
-from app.api.api_v1.routers.auth import auth_router
 from app.core import config
-from app.db.session import SessionLocal
 from app.core.auth import get_current_active_user
 from app.core.celery_app import celery_app
-from app import tasks
+from app.db.session import SessionLocal
 
+# import sqltap
 
 app = FastAPI(
     title=config.PROJECT_NAME, docs_url="/api/docs", openapi_url="/api"
 )
+
+
+# TODO
+# TODO for debug db requests
+# @app.middleware("http")
+# async def add_sql_tap(request: Request, call_next):
+#     profiler = sqltap.start()
+#     response = await call_next(request)
+#     statistics = profiler.collect()
+#     sqltap.report(statistics, "report.txt", report_format="text")
+#     return response
 
 
 @app.middleware("http")
@@ -54,6 +66,9 @@ app.include_router(categories_router, prefix="/api/v1", tags=["categories"])
 app.include_router(posts_router, prefix="/api/v1", tags=["posts"])
 app.include_router(images_router, prefix="/api/v1", tags=["images"])
 app.include_router(files_router, prefix="/api/v1", tags=["files"])
+
+
+# handler = Mangum(app)
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", reload=True, port=8888)

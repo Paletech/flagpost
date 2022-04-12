@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 6d577ea1c900
+Revision ID: 35cf1e9a66b7
 Revises: 03c9197989b6
-Create Date: 2022-02-01 03:21:31.610034-08:00
+Create Date: 2022-02-10 03:38:33.478323-08:00
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision = '6d577ea1c900'
+revision = '35cf1e9a66b7'
 down_revision = '03c9197989b6'
 branch_labels = None
 depends_on = None
@@ -28,8 +28,8 @@ def upgrade():
     op.add_column('category', sa.Column('image_id', postgresql.UUID(as_uuid=True), nullable=True))
     op.add_column('category', sa.Column('user_id', postgresql.UUID(as_uuid=True), nullable=True))
     op.create_unique_constraint(None, 'category', ['id'])
-    op.create_foreign_key(None, 'category', 'user', ['user_id'], ['id'])
     op.create_foreign_key(None, 'category', 'image', ['image_id'], ['id'])
+    op.create_foreign_key(None, 'category', 'user', ['user_id'], ['id'])
     op.add_column('file', sa.Column('post_id', postgresql.UUID(as_uuid=True), nullable=True))
     op.create_unique_constraint(None, 'file', ['id'])
     op.create_foreign_key(None, 'file', 'post', ['post_id'], ['id'])

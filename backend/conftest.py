@@ -1,13 +1,14 @@
+import typing as t
+
 import pytest
+from fastapi.testclient import TestClient
 from sqlalchemy import create_engine, event
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy_utils import database_exists, create_database, drop_database
-from fastapi.testclient import TestClient
-import typing as t
 
 from app.core import config, security
-from app.db.session import Base, get_db
 from app.db import models
+from app.db.session import Base, get_db
 from app.main import app
 
 
@@ -167,3 +168,80 @@ def superuser_token_headers(
     a_token = tokens["access_token"]
     headers = {"Authorization": f"Bearer {a_token}"}
     return headers
+
+
+@pytest.fixture
+def test_categories(test_db, test_superuser) -> models.Categories:
+    """
+    Categories for testing
+    """
+
+    categories = models.Categories(
+        color="black",
+        name="test_category",
+        user_id=test_superuser.id,
+        category_id=None,
+        selected=0,
+        created_at='2022-02-21 14:00:17.961523',
+        updated_at='2022-02-21 14:00:17.961523',
+    )
+    test_db.add(categories)
+    test_db.commit()
+    return categories
+
+
+@pytest.fixture
+def test_posts(test_db, test_superuser) -> models.Posts:
+    """
+    Post for testing
+    """
+
+    posts = models.Posts(
+        type="test_type",
+        text="test_text",
+        user_id=test_superuser.id,
+        # files='3fa85f64-5717-4562-b3fc-2c963f66afa6',
+        # categories='3fa85f64-5717-4562-b3fc-2c963f66afa6',
+        created_at='2022-02-21 14:00:17.961523',
+        updated_at='2022-02-21 14:00:17.961523',
+    )
+    test_db.add(posts)
+    test_db.commit()
+    return posts
+
+
+@pytest.fixture
+def test_files(test_db, test_posts, test_superuser) -> models.Files:
+    """
+    Files for testing
+    """
+
+    files = models.Files(
+        width=50,
+        height=50,
+        path="test_path",
+        public_path="test_path",
+        post_id=test_posts.id,
+        created_at='2022-02-21 14:00:17.961523',
+        updated_at='2022-02-21 14:00:17.961523',
+    )
+    test_db.add(files)
+    test_db.commit()
+    return files
+
+
+@pytest.fixture
+def test_images(test_db, test_superuser) -> models.Images:
+    """
+    Images for testing
+    """
+
+    images = models.Images(
+        path="test_path",
+        public_path="test_path",
+        created_at='2022-02-21 14:00:17.961523',
+        updated_at='2022-02-21 14:00:17.961523',
+    )
+    test_db.add(images)
+    test_db.commit()
+    return images

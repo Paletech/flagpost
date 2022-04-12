@@ -3,13 +3,8 @@ import {
   Create,
   SimpleForm,
   TextInput,
-  BooleanInput,
-  ReferenceInput,
-  SelectInput,
   ReferenceArrayInput,
-  SelectArrayInput,
-  ReferenceField,
-  TextField
+  SelectArrayInput
 
 } from 'react-admin';
 
@@ -19,17 +14,13 @@ export const PostCreate: FC = (props) => (
       <TextInput source="type" />
       <TextInput source="text" />
 
-      <ReferenceInput source="user_id" reference="users">
-            <SelectInput optionText="first_name" />
-      </ReferenceInput>
-       <ReferenceInput source="category_id" reference="categories">
-            <SelectInput optionText="name" />
-      </ReferenceInput>
-
-      <ReferenceArrayInput source="file_id" reference="files">
-            <SelectArrayInput optionText="id" />
+      <ReferenceArrayInput source="categories" reference="categories">
+            <SelectArrayInput optionText="name" />
       </ReferenceArrayInput>
 
+      <ReferenceArrayInput source="files" reference="files">
+            <SelectArrayInput optionText="id" />
+      </ReferenceArrayInput>
 
     </SimpleForm>
   </Create>

@@ -3,8 +3,6 @@ import {
   Create,
   SimpleForm,
   TextInput,
-  PasswordInput,
-  BooleanInput,
 } from 'react-admin';
 
 export const FileCreate: FC = (props) => (

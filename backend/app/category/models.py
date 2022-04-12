@@ -1,8 +1,8 @@
-import datetime
-
-from sqlalchemy import Boolean, Column, Integer, String, ForeignKey, DateTime
-from sqlalchemy_utils import ColorType
-from app.db.session import Base
+# import datetime
+#
+# from sqlalchemy import Boolean, Column, Integer, String, ForeignKey, DateTime
+# from sqlalchemy_utils import ColorType
+# from app.db.session import Base
 
 
 # class Categories(Base):

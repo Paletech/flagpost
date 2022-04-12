@@ -3,15 +3,11 @@ import {
   Edit,
   SimpleForm,
   TextInput,
-  PasswordInput,
-  BooleanInput,
-  ReferenceInput,
-  SelectInput,
   ReferenceArrayInput,
   SelectArrayInput
+  
 } from 'react-admin';
 
-// import { ReferenceManyToManyInput, useReferenceManyToManyUpdate } from '@react-admin/ra-many-to-many';
 export const PostEdit: FC = (props) => (
   <Edit {...props}>
     <SimpleForm>
@@ -19,17 +15,26 @@ export const PostEdit: FC = (props) => (
       <TextInput source="type" />
       <TextInput source="text" />
 
-      <ReferenceInput source="user_id" reference="users">
-            <SelectInput optionText="first_name" />
-      </ReferenceInput>
+{/*       <ReferenceArrayInput source="categories_id" reference="categories"> */}
+{/*             <SelectArrayInput optionText="name" /> */}
+{/*       </ReferenceArrayInput> */}
 
-      <ReferenceInput source="category_id" reference="categories">
-            <SelectInput optionText="name" />
-      </ReferenceInput>
+{/*       <ReferenceArrayInput label="files" source="file" reference="files" > */}
+{/*             <SelectArrayInput optionText="id" /> */}
+{/*       </ReferenceArrayInput> */}
 
-        <ReferenceArrayInput source="file_id" reference="files">
-             <SelectArrayInput optionText="id" />
-        </ReferenceArrayInput>
+{/*        <ReferenceInput label="Image" source="image_id" reference="images"> */}
+{/*             <SelectInput optionText="path" /> */}
+{/*       </ReferenceInput> */}
+
+
+{/*       <ReferenceArrayInput source="categories" reference="categories"> */}
+{/*             <SelectArrayInput optionText="id" /> */}
+{/*       </ReferenceArrayInput> */}
+
+      <ReferenceArrayInput source="files" reference="files">
+            <SelectArrayInput optionText="id" />
+      </ReferenceArrayInput>
 
     </SimpleForm>
   </Edit>

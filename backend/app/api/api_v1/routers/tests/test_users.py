@@ -6,7 +6,7 @@ def test_get_users(client, test_superuser, superuser_token_headers):
     assert response.status_code == 200
     assert response.json() == [
         {
-            "id": test_superuser.id,
+            "id": str(test_superuser.id),
             "email": test_superuser.email,
             "is_active": test_superuser.is_active,
             "is_superuser": test_superuser.is_superuser,
@@ -24,7 +24,7 @@ def test_delete_user(client, test_superuser, test_db, superuser_token_headers):
 
 def test_delete_user_not_found(client, superuser_token_headers):
     response = client.delete(
-        "/api/v1/users/4321", headers=superuser_token_headers
+        "/api/v1/users/4f58bd00-5bc1-4aea-9c4b-8ddb23b6016b", headers=superuser_token_headers
     )
     assert response.status_code == 404
 
@@ -45,7 +45,7 @@ def test_edit_user(client, test_superuser, superuser_token_headers):
         headers=superuser_token_headers,
     )
     assert response.status_code == 200
-    new_user["id"] = test_superuser.id
+    new_user["id"] = str(test_superuser.id)
     new_user.pop("password")
     assert response.json() == new_user
 
@@ -58,7 +58,7 @@ def test_edit_user_not_found(client, test_db, superuser_token_headers):
         "password": "new_password",
     }
     response = client.put(
-        "/api/v1/users/1234", json=new_user, headers=superuser_token_headers
+        "/api/v1/users/4f58bd00-5bc1-4aea-9c4b-8ddb23b6016b", json=new_user, headers=superuser_token_headers
     )
     assert response.status_code == 404
 
@@ -73,7 +73,7 @@ def test_get_user(
     )
     assert response.status_code == 200
     assert response.json() == {
-        "id": test_user.id,
+        "id": str(test_user.id),
         "email": test_user.email,
         "is_active": bool(test_user.is_active),
         "is_superuser": test_user.is_superuser,
@@ -81,7 +81,7 @@ def test_get_user(
 
 
 def test_user_not_found(client, superuser_token_headers):
-    response = client.get("/api/v1/users/123", headers=superuser_token_headers)
+    response = client.get("/api/v1/users/4f58bd00-5bc1-4aea-9c4b-8ddb23b6016b", headers=superuser_token_headers)
     assert response.status_code == 404
 
 

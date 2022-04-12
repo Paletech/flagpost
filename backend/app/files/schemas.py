@@ -2,7 +2,6 @@ import datetime
 from uuid import UUID
 
 from pydantic import BaseModel
-import typing as t
 
 
 class FileBase(BaseModel):
@@ -35,6 +34,7 @@ class FileUpload(BaseModel):
     # class Config:
     #     orm_mode = True
     #
+
 
 class FileEdit(FileBase):
     id: UUID

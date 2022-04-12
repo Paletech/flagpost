@@ -4,13 +4,10 @@ import {
   List,
   Datagrid,
   TextField,
-  BooleanField,
-  EmailField,
   EditButton,
   ReferenceField,
-  SingleFieldList,
-  ChipField,
-  ReferenceManyField,
+  ArrayField
+
 
 } from 'react-admin';
 
@@ -21,13 +18,25 @@ export const PostList: FC = (props) => (
       <TextField source="type" />
       <TextField source="text" />
 
-    <ReferenceManyField label="File" reference="files" target="post_id">
-        <SingleFieldList>
-            <ChipField source="id" />
-        </SingleFieldList>
-    </ReferenceManyField>
+      <ReferenceField source="user_id" reference="users" label="User Name">
+            <TextField source="first_name" />
+      </ReferenceField>
 
-      <EditButton />
+    <ArrayField source="categories">
+        <Datagrid>
+            <TextField source="id" />
+            <TextField source="name" />
+         </Datagrid>
+    </ArrayField>
+
+
+    <ArrayField source="files">
+        <Datagrid>
+            <TextField source="id" />
+        </Datagrid>
+    </ArrayField>
+
+{/*      <EditButton /> */}
     </Datagrid>
   </List>
 );

@@ -1,12 +1,14 @@
+import base64
 import typing as t
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Response, Request, UploadFile, File
+from fastapi import APIRouter, Depends, Response
 
 from app.core.auth import get_current_user
+from app.core.upload_data import upload_image_to_s3, delete_file_from_s3
 from app.db.session import get_db
-from app.image.crud import get_all_images, get_image, delete_image
-from app.image.schemas import ImageOut
+from app.image.crud import get_all_images, get_image, delete_image, create_image
+from app.image.schemas import ImageOut, ImageUpload
 
 images_router = r = APIRouter()
 
@@ -33,7 +35,6 @@ async def image_list(
     response_model=ImageOut,
 )
 async def images_details(
-        request: Request,
         image_id: UUID,
         db=Depends(get_db),
         current_user=Depends(get_current_user),
@@ -41,7 +42,7 @@ async def images_details(
     """
     Get image by id
     """
-    image = get_image(db, image_id)
+    image = get_image(db, image_id=image_id)
     return image
 
 
@@ -49,30 +50,28 @@ async def images_details(
     "/images",
 )
 async def image_upload(
-        # request: Request,
         # file: UploadFile = File(...),
-        # file: str,
+        pictures: ImageUpload,
         db=Depends(get_db),
         current_user=Depends(get_current_user),
 ):
     """
     Upload image
     """
-    # response = upload_to_s3(file, current_user, post_id)
-    # path = response.pop('data_for_base')
-    # create_file(db, post_id, path)
 
-    file_location = f"files/{file.filename}"
-    with open(file_location, "wb+") as file_object:
-        file_object.write(file.file.read())
-    # return image
+    img_data = pictures.pictures[0].get('src').split('base64,')[-1]
+    filename = pictures.pictures[0].get('title')
+    file = base64.b64decode(img_data)
+
+    url = await upload_image_to_s3(file=file, filename=filename)
+    create_image(db, url)
+    return url
 
 
 @r.delete(
     "/images/{image_id}",
 )
 async def image_delete(
-        request: Request,
         image_id: UUID,
         db=Depends(get_db),
         current_user=Depends(get_current_user),
@@ -80,8 +79,8 @@ async def image_delete(
     """
     Delete image
     """
-    delete_image(db, image_id)
+
+    image = get_image(db, image_id)
+    await delete_file_from_s3(image.path)
+    delete_image(db, image=image)
     return {"status": True}
-
-
-
