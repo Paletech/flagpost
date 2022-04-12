@@ -45,7 +45,6 @@ jobs:
       - name: set pythonpath
         run: |
           echo "PYTHONPATH=." >> $GITHUB_ENV
-
       - name: Run migrations
         working-directory: ./backend
         run: |
