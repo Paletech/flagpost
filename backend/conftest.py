@@ -7,7 +7,7 @@ import typing as t
 
 from app.core import config, security
 from app.db.session import Base, get_db
-from app.db import models
+from app.db.models import User, Posts
 from app.main import app
 
 
@@ -100,12 +100,12 @@ def get_password_hash() -> str:
 
 
 @pytest.fixture
-def test_user(test_db) -> models.User:
+def test_user(test_db) -> User:
     """
     Make a test user in the database
     """
 
-    user = models.User(
+    user = User(
         email="fake@email.com",
         hashed_password=get_password_hash(),
         is_active=True,
@@ -116,12 +116,12 @@ def test_user(test_db) -> models.User:
 
 
 @pytest.fixture
-def test_superuser(test_db) -> models.User:
+def test_superuser(test_db) -> User:
     """
     Superuser for testing
     """
 
-    user = models.User(
+    user = User(
         email="fakeadmin@email.com",
         hashed_password=get_password_hash(),
         is_superuser=True,
@@ -156,6 +156,7 @@ def user_token_headers(
 def superuser_token_headers(
     client: TestClient, test_superuser, test_password, monkeypatch
 ) -> t.Dict[str, str]:
+
     monkeypatch.setattr(security, "verify_password", verify_password_mock)
 
     login_data = {
@@ -167,3 +168,17 @@ def superuser_token_headers(
     a_token = tokens["access_token"]
     headers = {"Authorization": f"Bearer {a_token}"}
     return headers
+
+
+@pytest.fixture
+def test_post(test_db, test_superuser: User) -> Posts:
+    """Function fixture that creates, stores and returns a new test post object."""
+    post = Posts(
+        type="test",
+        text="test",
+        user_id=test_superuser.id,
+        created_at='2023-03-02 16:05:57.312334',
+        updated_at='2023-03-02 16:20:12.758392',
+    )
+    test_db.add(post)
+    return post
