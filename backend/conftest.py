@@ -181,4 +181,5 @@ def test_post(test_db, test_superuser: User) -> Posts:
         updated_at='2023-03-02 16:20:12.758392',
     )
     test_db.add(post)
+    test_db.commit()
     return post
