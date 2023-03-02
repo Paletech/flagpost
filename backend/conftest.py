@@ -1,6 +1,6 @@
 import pytest
 from sqlalchemy import create_engine, event
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy_utils import database_exists, create_database, drop_database
 from fastapi.testclient import TestClient
 import typing as t
@@ -16,7 +16,7 @@ def get_test_db_url() -> str:
 
 
 @pytest.fixture
-def test_db():
+def test_db() -> Session:
     """
     Modify the db session to automatically roll back after each test.
     This is to avoid tests affecting the database state of other tests.
