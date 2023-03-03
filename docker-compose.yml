@@ -31,6 +31,8 @@ services:
       context: backend
       dockerfile: Dockerfile
     command: celery --app app.tasks worker --loglevel=DEBUG -Q main-queue -c 1
+    depends_on:
+      - redis
 
   flower:
     image: mher/flower
@@ -39,6 +41,7 @@ services:
         - 5555:5555
     depends_on:
       - redis
+      - worker
 
   backend:
     build:
@@ -46,6 +49,8 @@ services:
       dockerfile: Dockerfile
     command: python app/main.py
     tty: true
+    ports:
+      - "8888:8888"
     volumes:
       - ./backend:/app/:cached
       - ./.docker/.ipython:/root/.ipython:cached

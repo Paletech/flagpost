@@ -7,7 +7,7 @@ import typing as t
 
 from app.core import config, security
 from app.db.session import Base, get_db
-from app.db.models import User, Posts
+from app.db.models import User, Posts, Files, Categories, Images
 from app.main import app
 
 
@@ -171,7 +171,7 @@ def superuser_token_headers(
 
 
 @pytest.fixture
-def test_post(test_db, test_superuser: User) -> Posts:
+def test_post(test_db, test_superuser) -> Posts:
     """Function fixture that creates, stores and returns a new test post object."""
     post = Posts(
         type="test",
@@ -183,3 +183,46 @@ def test_post(test_db, test_superuser: User) -> Posts:
     test_db.add(post)
     test_db.commit()
     return post
+
+
+@pytest.fixture
+def test_file(test_db, test_post) -> Files:
+    """Function fixture that creates, stores and returns a new test file object."""
+    file = Files(
+        width=100,
+        height=100,
+        path="some_path",
+        public_path="some_public_path",
+        post_id=test_post.id
+    )
+    test_db.add(file)
+    test_db.commit()
+    return file
+
+
+@pytest.fixture
+def test_category(test_db, test_superuser, test_image) -> Categories:
+    """Function fixture that creates, stores and returns a new test category object."""
+    category = Categories(
+        color="some_color",
+        name="same_category",
+        user_id=test_superuser.id,
+        image_id=test_image.id
+    )
+    test_db.add(category)
+    test_db.commit()
+    return category
+
+
+@pytest.fixture
+def test_image(test_db, test_superuser) -> Images:
+    """Function fixture that creates, stores and returns a new test category object."""
+    image = Images(
+        path="some_path",
+        public_path="some_public_path",
+        created_at='"2019-08-24T14:15:22Z"',
+        updated_at='"2019-08-24T14:15:22Z"',
+    )
+    test_db.add(image)
+    test_db.commit()
+    return image

@@ -49,6 +49,7 @@ async def post_details(
 @r.post(
     "/posts",
     response_model=PostOut,
+    status_code=201
 )
 async def post_create(
         request: Request,
