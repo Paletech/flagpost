@@ -1,7 +1,6 @@
 import secrets
 
 import boto3
-import requests
 from fastapi import HTTPException, status
 
 
@@ -17,7 +16,7 @@ def upload_to_s3(file, user, post_id):
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="post id is empty")
 
     file_name = (secrets.token_urlsafe(10) + '.').join(file.filename.split('.'))
-    #Generate the presigned URL
+    # Generate the presigned URL
     response = s3_client.generate_presigned_post(
         Bucket='fastapi-test-api',
         Key=f'{user.id}/{post_id}/{file_name}',

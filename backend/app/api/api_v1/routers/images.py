@@ -50,7 +50,7 @@ async def images_details(
 )
 async def image_upload(
         # request: Request,
-        # file: UploadFile = File(...),
+        file: UploadFile = File(...),
         # file: str,
         db=Depends(get_db),
         current_user=Depends(get_current_user),
@@ -82,6 +82,3 @@ async def image_delete(
     """
     delete_image(db, image_id)
     return {"status": True}
-
-
-

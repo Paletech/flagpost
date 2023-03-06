@@ -14,7 +14,8 @@ def get_all_categories(db: Session, skip: int, limit: int) -> t.List[schemas.Cat
 
 
 def get_my_category(db: Session, skip: int, limit: int, user_id: UUID):
-    category = db.query(models.Categories).filter(models.Categories.user_id == user_id.id).offset(skip).limit(limit).all()
+    category = db.query(models.Categories).filter(
+        models.Categories.user_id == user_id.id).offset(skip).limit(limit).all()
     if not category:
         raise HTTPException(status_code=404, detail="Category not found")
     return category

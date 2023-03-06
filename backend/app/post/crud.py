@@ -92,7 +92,6 @@ def edit_post(db: Session, user_id: UUID, post_id: UUID, post: schemas.PostBase)
     db_post.categories = [categories]
     db_post.files.append(files)
 
-
     # files = db.query(models.Files).get(update_data.pop("files"))
     # db_post.files = files
     # update_data.pop("files")
@@ -106,6 +105,3 @@ def edit_post(db: Session, user_id: UUID, post_id: UUID, post: schemas.PostBase)
     db.commit()
     db.refresh(db_post)
     return db_post
-
-
-

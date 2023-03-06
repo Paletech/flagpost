@@ -1,15 +1,15 @@
 from uuid import UUID
 
-from fastapi import APIRouter, Request, Depends, Response, encoders
+from fastapi import APIRouter, Request, Depends, Response
 import typing as t
 
-from app.category.schemas import CategoryBase, CategoryOut, CategoryCreate, CategoryEdit
+from app.category.schemas import CategoryOut, CategoryCreate, CategoryEdit
 from app.category.crud import get_all_categories, get_my_category, create_category, delete_category, edit_category, \
     get_category
 
 from app.db.session import get_db
 
-from app.core.auth import get_current_active_user, get_current_active_superuser, get_current_user
+from app.core.auth import get_current_user
 
 categories_router = r = APIRouter()
 
@@ -133,4 +133,3 @@ async def categories_update(
     """
 
     return edit_category(db, category_id, category)
-

@@ -95,4 +95,3 @@ async def post_update(
     """
 
     return edit_post(db, current_user, post_id, post)
-
