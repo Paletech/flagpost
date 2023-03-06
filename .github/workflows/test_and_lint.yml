@@ -42,11 +42,14 @@ jobs:
 
       - name: Start migration
         working-directory: ./backend
+        env:
+          DATABASE_URL: 'postgresql://postgres:password@localhost:5432/postgres'
         run: >-
-          echo "DATABASE_URL=postgresql://postgres:password@localhost:5432/postgres" > .env
           alembic upgrade head
         
       - name: Test backend
+        env:
+          DATABASE_URL: 'postgresql://postgres:password@localhost:5432/postgres'
         run: pytest
         
       - name: Lint backend
