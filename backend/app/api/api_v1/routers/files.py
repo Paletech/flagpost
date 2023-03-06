@@ -7,8 +7,8 @@ from app.core.auth import get_current_user
 from app.core.upload_data import upload_to_s3
 from app.db.session import get_db
 from app.files.crud import get_all_files, get_file, create_file, delete_file
-from app.files.schemas import FileOut, FileCreate, FileUpload
-from app.post.crud import delete_post
+from app.files.schemas import FileOut
+
 
 files_router = r = APIRouter()
 
@@ -96,6 +96,3 @@ async def file_delete(
     """
     delete_file(db, file_id)
     return {"status": True}
-
-
-

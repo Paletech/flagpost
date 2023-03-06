@@ -1,0 +1,57 @@
+name: Test and Lint
+
+on: ["pull_request"]
+
+jobs:
+  test-lint:
+    name: Test and lint
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:12
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: postgres
+        ports:
+          - '5432:5432'
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set Up Python 3.8
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'
+
+      - name: Install requirements
+        run: >-
+          pip install --upgrade pip
+          pip install -r backend/requirements.txt
+          pip install flake8
+
+      - name: Set up python path
+        run: echo "PYTHONPATH=." >> $GITHUB_ENV
+
+      - name: Start migration
+        working-directory: ./backend
+        env:
+          DATABASE_URL: 'postgresql://postgres:password@localhost:5432/postgres'
+        run: >-
+          alembic upgrade head
+
+      - name: Test backend
+        env:
+          DATABASE_URL: 'postgresql://postgres:password@localhost:5432/postgres'
+        run: pytest
+
+      - name: Lint backend
+        working-directory: ./backend
+        run: flake8

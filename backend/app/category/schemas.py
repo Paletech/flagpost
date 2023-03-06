@@ -30,7 +30,7 @@ class CategoryOut(CategoryBase):
     # image_id: Optional[ImageOut] = Field(default=None, foreign_key="images.id")
     # image_id: ImageOut = Field(default=None, foreign_key="images.id")
     # image_id: UUID # TODO
-    image_id: ImageOut
+    # image_id: ImageOut
 
     class Config:
         orm_mode = True

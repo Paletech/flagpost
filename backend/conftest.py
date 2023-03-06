@@ -1,13 +1,13 @@
 import pytest
 from sqlalchemy import create_engine, event
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy_utils import database_exists, create_database, drop_database
 from fastapi.testclient import TestClient
 import typing as t
 
 from app.core import config, security
 from app.db.session import Base, get_db
-from app.db import models
+from app.db.models import User, Posts, Files, Categories, Images
 from app.main import app
 
 
@@ -16,7 +16,7 @@ def get_test_db_url() -> str:
 
 
 @pytest.fixture
-def test_db():
+def test_db() -> Session:
     """
     Modify the db session to automatically roll back after each test.
     This is to avoid tests affecting the database state of other tests.
@@ -100,12 +100,12 @@ def get_password_hash() -> str:
 
 
 @pytest.fixture
-def test_user(test_db) -> models.User:
+def test_user(test_db) -> User:
     """
     Make a test user in the database
     """
 
-    user = models.User(
+    user = User(
         email="fake@email.com",
         hashed_password=get_password_hash(),
         is_active=True,
@@ -116,12 +116,12 @@ def test_user(test_db) -> models.User:
 
 
 @pytest.fixture
-def test_superuser(test_db) -> models.User:
+def test_superuser(test_db) -> User:
     """
     Superuser for testing
     """
 
-    user = models.User(
+    user = User(
         email="fakeadmin@email.com",
         hashed_password=get_password_hash(),
         is_superuser=True,
@@ -156,6 +156,7 @@ def user_token_headers(
 def superuser_token_headers(
     client: TestClient, test_superuser, test_password, monkeypatch
 ) -> t.Dict[str, str]:
+
     monkeypatch.setattr(security, "verify_password", verify_password_mock)
 
     login_data = {
@@ -167,3 +168,61 @@ def superuser_token_headers(
     a_token = tokens["access_token"]
     headers = {"Authorization": f"Bearer {a_token}"}
     return headers
+
+
+@pytest.fixture
+def test_post(test_db, test_superuser) -> Posts:
+    """Function fixture that creates, stores and returns a new test post object."""
+    post = Posts(
+        type="test",
+        text="test",
+        user_id=test_superuser.id,
+        created_at='2023-03-02 16:05:57.312334',
+        updated_at='2023-03-02 16:20:12.758392',
+    )
+    test_db.add(post)
+    test_db.commit()
+    return post
+
+
+@pytest.fixture
+def test_file(test_db, test_post) -> Files:
+    """Function fixture that creates, stores and returns a new test file object."""
+    file = Files(
+        width=100,
+        height=100,
+        path="some_path",
+        public_path="some_public_path",
+        post_id=test_post.id
+    )
+    test_db.add(file)
+    test_db.commit()
+    return file
+
+
+@pytest.fixture
+def test_category(test_db, test_superuser, test_image) -> Categories:
+    """Function fixture that creates, stores and returns a new test category object."""
+    category = Categories(
+        color="some_color",
+        name="same_category",
+        user_id=test_superuser.id,
+        image_id=test_image.id
+    )
+    test_db.add(category)
+    test_db.commit()
+    return category
+
+
+@pytest.fixture
+def test_image(test_db, test_superuser) -> Images:
+    """Function fixture that creates, stores and returns a new test category object."""
+    image = Images(
+        path="some_path",
+        public_path="some_public_path",
+        created_at='"2019-08-24T14:15:22Z"',
+        updated_at='"2019-08-24T14:15:22Z"',
+    )
+    test_db.add(image)
+    test_db.commit()
+    return image
