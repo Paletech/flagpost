@@ -41,7 +41,9 @@ jobs:
 
       - name: Start migration
         working-directory: ./backend
-        run: alembic upgrade head
+        run: >-
+          echo "DATABASE_URL=postgresql://postgres:password@postgres:5432/postgres" >> .env
+          alembic upgrade head
         
       - name: Test backend
         run: pytest
