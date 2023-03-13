@@ -26,7 +26,8 @@ jobs:
         
     - name: Install dependencies
       run: |
-        pip3 install -r ./backend/requirements.deploy.txt -t ./backend
+        pip install aws-psycopg2
+        pip install -r ./backend/requirements.deploy.txt -t ./backend
     
     - name: Create deployment package
       run: |
