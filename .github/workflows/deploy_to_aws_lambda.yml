@@ -37,7 +37,7 @@ jobs:
         cd backend/lib
         zip -r ../lambda.zip . -x "*.zip*" "*git*"
         cd ..
-        zip -ru lambda.zip . -x "*.zip*" "*__pycache__*" "*alembic*" "*git*" 
+        zip -ru lambda.zip app __init__.py -x "*.zip*" "*__pycache__*" "*alembic*" "*git*" 
     
     - name: Upload deployment package to S3
       env:
