@@ -35,7 +35,7 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       run: |
         echo ls
-        aws s3 cp lambda.zip s3://${{ secrets.S3_BUCKET_NAME }}/lambda.zip
+        aws s3 cp backend/lambda.zip s3://${{ secrets.S3_BUCKET_NAME }}/lambda.zip
     
     - name: Deploy to AWS Lambda
       env:
