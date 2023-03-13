@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Depends
 from starlette.requests import Request
 import uvicorn
+from mangum import Mangum
 
 # from api.api_v1.routers.jobs import jobs_router
 from app.api.api_v1.routers.categories import categories_router
@@ -53,6 +54,10 @@ app.include_router(categories_router, prefix="/api/v1", tags=["categories"])
 app.include_router(posts_router, prefix="/api/v1", tags=["posts"])
 app.include_router(images_router, prefix="/api/v1", tags=["images"])
 app.include_router(files_router, prefix="/api/v1", tags=["files"])
+
+
+handler = Mangum(app)
+
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", reload=True, port=8888)
