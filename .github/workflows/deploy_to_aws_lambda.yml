@@ -30,7 +30,7 @@ jobs:
         
     - name: Install dependencies
       run: |
-        pip install -r ./backend/requirements.txt -t backend/lib
+        pip install -r ./backend/requirements.deploy.txt -t backend/lib
     
     - name: Create deployment package
       run: |
