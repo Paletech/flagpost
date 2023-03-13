@@ -26,7 +26,7 @@ jobs:
         
     - name: Install dependencies
       run: |
-        pip3 install psycopg2-binary
+        pip3 install psycopg2-binary -t ./backend
         pip3 install -r ./backend/requirements.txt -t ./backend
     
     - name: Create deployment package
