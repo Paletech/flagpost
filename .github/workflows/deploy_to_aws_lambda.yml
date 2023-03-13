@@ -27,13 +27,14 @@ jobs:
     - name: Install dependencies
       run: |
         pip install aws-psycopg2
-        pip install -r ./backend/requirements.deploy.txt -t ./backend
+        pip install -r ./backend/requirements.txt -t ./backend/lib
     
     - name: Create deployment package
       run: |
-        cd backend
+        cd backend/lib
         rm -f lambda.zip
         zip -r lambda.zip . -x "*.git*" "*.zip*" "*__pycache__*" "*alembic*"
+        zip -ru lambda.zip ../app
     
     - name: Upload deployment package to S3
       env:
@@ -41,7 +42,7 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       run: |
         echo ls
-        aws s3 cp backend/lambda.zip s3://${{ env.S3_BUCKET_NAME }}/lambda.zip
+        aws s3 cp backend/lib/lambda.zip s3://${{ env.S3_BUCKET_NAME }}/lambda.zip
     
     - name: Deploy to AWS Lambda
       env:
