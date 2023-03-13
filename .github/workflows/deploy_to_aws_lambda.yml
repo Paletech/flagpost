@@ -26,14 +26,13 @@ jobs:
         
     - name: Install dependencies
       run: |
-        pip3 install psycopg2-binary -t ./backend
-        pip3 install -r ./backend/requirements.txt -t ./backend
+        pip3 install -r ./backend/requirements.deploy.txt -t ./backend
     
     - name: Create deployment package
       run: |
         cd backend
         rm -f lambda.zip
-        zip -r lambda.zip . -x "*.git*" "*.zip*" "*__pycache__*"
+        zip -r lambda.zip . -x "*.git*" "*.zip*" "*__pycache__*" "*alembic*"
     
     - name: Upload deployment package to S3
       env:
