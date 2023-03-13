@@ -35,9 +35,9 @@ jobs:
     - name: Create deployment package
       run: |
         cd backend/lib
-        zip -r ../lambda.zip .
+        zip -r ../lambda.zip . -x "*.zip*" 
         cd ..
-        zip -ru lambda.zip .
+        zip -ru lambda.zip . -x "*.zip*" "*__pycache__*"
     
     - name: Upload deployment package to S3
       env:
