@@ -25,7 +25,9 @@ jobs:
         sudo pip3 install awscli
         
     - name: Install dependencies
-      run: pip3 install -r ./backend/requirements.txt -t ./backend
+      run: |
+        pip3 install psycopg2-binary
+        pip3 install -r ./backend/requirements.txt -t ./backend
     
     - name: Create deployment package
       run: |
