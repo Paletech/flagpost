@@ -13,9 +13,11 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Install dependencies
+        working-directory: frontend/
         run: npm install
 
       - name: Build app
+        working-directory: frontend/
         run: npm run build
 
       - name: Configure AWS credentials
@@ -26,6 +28,7 @@ jobs:
           aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
 
       - name: Deploy to S3
+        working-directory: frontend/
         env:
           aws-bucket-name: flagpost-react
         run: aws s3 sync ./build s3://${{ env.aws-bucket-name }} --delete
