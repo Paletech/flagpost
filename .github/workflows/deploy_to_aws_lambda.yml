@@ -30,18 +30,14 @@ jobs:
         
     - name: Install dependencies
       run: |
-        python -m venv venv
-        source venv/bin/activate
-        pip install -r ./backend/requirements.txt
-        deactivate
+        pip install -r ./backend/requirements.txt -t backend/lib
     
     - name: Create deployment package
       run: |
-        cd venv/lib/python3.8/site-packages
-        rm -f lambda.zip
-        zip -r ../../../../backend/lambda.zip . -x "*.git*" "*.zip*" "*__pycache__*"
-        cd ../../../../backend
-        zip -ru lambda.zip app
+        cd backend/lib
+        zip -r ../lambda.zip .
+        cd ..
+        zip -ru lambda.zip .
     
     - name: Upload deployment package to S3
       env:
