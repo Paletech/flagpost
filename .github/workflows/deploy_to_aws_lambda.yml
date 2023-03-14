@@ -27,14 +27,16 @@ jobs:
       run: |
         sudo apt-get update && \
         sudo pip install awscli
-        sudo pip install alembic==1.4.3
-        
+
     - name: Install dependencies
       run: |
         pip install -r ./backend/requirements.txt -t backend/lib
         
+    - name: Set up python path
+      run: echo "PYTHONPATH=." >> $GITHUB_ENV
+
     - name: Run migrations
-      working-directory: backend/
+      working-directory: ./backend
       env:
         DATABASE_URL: ${{ secrets.AWS_DATABASE_URL }}
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
