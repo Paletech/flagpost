@@ -27,6 +27,7 @@ jobs:
       run: |
         sudo apt-get update && \
         sudo pip install awscli
+        sudo pip install alembic==1.4.3
         
     - name: Install dependencies
       run: |
