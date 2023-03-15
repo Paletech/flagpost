@@ -1,4 +1,5 @@
 import decodeJwt from 'jwt-decode';
+import {BASE_URL} from "../config";
 
 export const isAuthenticated = () => {
   const permissions = localStorage.getItem('permissions');
@@ -26,7 +27,7 @@ export const login = async (email: string, password: string) => {
   formData.append('username', email);
   formData.append('password', password);
 
-  const request = new Request('/api/token', {
+  const request = new Request(BASE_URL + '/api/token', {
     method: 'POST',
     body: formData,
   });
@@ -84,7 +85,7 @@ export const signUp = async (
   formData.append('username', email);
   formData.append('password', password);
 
-  const request = new Request('/api/signup', {
+  const request = new Request(BASE_URL + '/api/signup', {
     method: 'POST',
     body: formData,
   });

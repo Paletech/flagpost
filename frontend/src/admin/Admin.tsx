@@ -8,6 +8,7 @@ import { PostList, PostEdit, PostCreate } from './Posts';
 import { UserList, UserEdit, UserCreate } from './Users';
 import { FileList, FileCreate, FileEdit } from './Files';
 import { ImageList, ImageCreate, ImageEdit } from './Images';
+import {BASE_URL} from "../config";
 
 const httpClient = (url: any, options: any) => {
   if (!options) {
@@ -21,7 +22,7 @@ const httpClient = (url: any, options: any) => {
   return fetchUtils.fetchJson(url, options);
 };
 
-const dataProvider = simpleRestProvider('api/v1', httpClient);
+const dataProvider = simpleRestProvider(BASE_URL + 'api/v1', httpClient);
 
 export const Admin: FC = () => {
   return (
