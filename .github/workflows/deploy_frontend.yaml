@@ -3,7 +3,7 @@ name: Deploy Frontend to  S3
 on:
   push:
     branches:
-      - frontend_action
+      - main
 
 jobs:
   build-and-deploy:
