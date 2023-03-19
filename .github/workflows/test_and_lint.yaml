@@ -37,9 +37,6 @@ jobs:
           pip install -r backend/requirements.txt
           pip install flake8
 
-      - name: Set up python path
-        run: echo "PYTHONPATH=." >> $GITHUB_ENV
-
       - name: Start migration
         working-directory: ./backend
         env:
@@ -49,6 +46,7 @@ jobs:
 
       - name: Test backend
         env:
+          PYTHONPATH: .
           DATABASE_URL: 'postgresql://postgres:password@localhost:5432/postgres'
         run: pytest
 
