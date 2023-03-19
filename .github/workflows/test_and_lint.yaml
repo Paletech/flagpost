@@ -40,11 +40,13 @@ jobs:
       - name: Start migration
         working-directory: ./backend
         env:
+          PYTHONPATH: .
           DATABASE_URL: 'postgresql://postgres:password@localhost:5432/postgres'
         run: >-
           alembic upgrade head
 
       - name: Test backend
+        working-directory: ./backend
         env:
           PYTHONPATH: .
           DATABASE_URL: 'postgresql://postgres:password@localhost:5432/postgres'
