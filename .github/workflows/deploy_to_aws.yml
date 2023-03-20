@@ -49,11 +49,11 @@ jobs:
     - name: Create deployment package
       working-directory: backend
       run: |
-        cd venv/lib/python3.8/site-packages
-        zip -r9 ../../../../lambda.zip . -x "*alembic*" "*__pycache__*" "*.git*" "*.pyi*"
-        rm -r venv
-        cd ../../../../
-        zip -ru lambda.zip . -x "*.zip*" "lambda.zip" "*__pycache__*" "*alembic*" "*git*" "venv"
+        # cd venv/lib/python3.8/site-packages
+        # zip -r9 ../../../../lambda.zip . -x "*alembic*" "*__pycache__*" "*.git*" "*.pyi*"
+        # rm -r venv
+        # cd ../../../../
+        zip lambda.zip -r . -x "*.zip*" "lambda.zip" "*__pycache__*" "*alembic*" "*git*" "venv"
     
     - name: Upload deployment package to S3
       working-directory: backend
