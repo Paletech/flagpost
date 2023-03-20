@@ -78,7 +78,6 @@ async def post_upload_file(
     """
     manager = FileS3Manager(user=current_user)
     path = await manager.upload(file=file)
-    print(path)
     # file = create_file(db, None, path)
     return file
 

@@ -1,28 +1,32 @@
-import os
-from abc import ABC, abstractmethod
+from uuid import uuid4
+from abc import ABC
+from datetime import date
 from pathlib import Path
 from typing import Union
 from urllib.parse import urlparse
 
-from aioboto3 import Session
+
+from app.core.s3_upload.abs import AbstractBaseS3Manager
 from app.db.models import Files, Images, User
-from app.db.session import Base
 from fastapi import UploadFile
 
 
-class AbstractBaseS3ObjectManager(ABC):
+class BaseS3ObjectManager:
     """Class for base objects management such:
      get filename,
      set filename,
      get_suffix
      """
-    @abstractmethod
-    def set_filename(self, **kwargs):
-        """Abstract method that assign file name."""
-        pass
 
-    @classmethod
-    def get_file_type(cls, filename: str) -> str:
+    def set_filename(self, user: User, file: UploadFile):
+        """Method that assign file name."""
+        now = date.today()
+        folder_from_now = "/" + str(now.year) + "/" + str(now.month) + "/" + str(now.day) + "/"
+        filename = user.id.hex + folder_from_now + uuid4().hex + self.get_file_type(filename=file.filename)
+        return filename
+
+    @staticmethod
+    def get_file_type(filename: str) -> str:
         """Method that returns file type (suffix)."""
         return Path(filename).suffix
 
@@ -33,38 +37,7 @@ class AbstractBaseS3ObjectManager(ABC):
         return object_id
 
 
-class AbstractBaseS3Manager(ABC):
-    """Base Abstract class that manages interaction with s3 bucket."""
-    __session = Session(
-        aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID"),
-        aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY")
-    )
-    BASE_BUCKET_URL_PATTERN = "https://{0}.s3.amazonaws.com/{1}"
-
-    @classmethod
-    async def upload_object(cls, file, bucket: str, filename: str) -> None:
-        """Async method that uploads object to s3 bucket."""
-        async with cls.__session.client("s3") as s3:
-            await s3.upload_fileobj(file, bucket, filename)
-
-    @classmethod
-    async def delete_object(cls,  bucket: str, object_key: str) -> None:
-        """Abstract method that deletes object from s3 bucket."""
-        async with cls.__session.client("s3") as s3:
-            await s3.delete_object(Bucket=bucket, Key=object_key)
-
-    @abstractmethod
-    async def upload(self, file: UploadFile) -> str:
-        """Abstract method that uploads object to s3 bucket."""
-        pass
-
-    @abstractmethod
-    async def delete(self, file_object: Base):
-        """Abstract method that deletes object from s3 bucket."""
-        pass
-
-
-class BaseS3Manager(AbstractBaseS3Manager, AbstractBaseS3ObjectManager, ABC):
+class BaseS3Manager(AbstractBaseS3Manager, BaseS3ObjectManager):
     """Base s3 manager class."""
     BUCKET_NAME = None
 
