@@ -2,7 +2,7 @@ import typing as t
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, Response, Request, UploadFile, File
-from app.core.s3_upload.image import ImageS3Manager
+from app.core.s3_upload.files import FileS3Manager
 from app.core.auth import get_current_user
 from app.db.session import get_db
 from app.image.crud import get_all_images, get_image, delete_image, create_image
@@ -59,10 +59,7 @@ async def image_upload(
     """
     Upload image
     """
-    # response = upload_to_s3(file, current_user, post_id)
-    # path = response.pop('data_for_base')
-    # create_file(db, post_id, path)
-    manager = ImageS3Manager(user=current_user)
+    manager = FileS3Manager(user=current_user)
     path = await manager.upload(file=file)
     image = create_image(db=db, path=path)
     return image
@@ -81,10 +78,8 @@ async def image_delete(
     """
     Delete image
     """
-    image = get_image(db, image_id)
-    manager = ImageS3Manager(user=current_user)
-    image_s3_id = ImageS3Manager.get_object_id(image.path)
-    await manager.delete(image_s3_id)
+    image = delete_image(db, image_id)
+    manager = FileS3Manager(user=current_user)
+    await manager.delete(image)
 
-    delete_image(db, image_id)
     return {"status": True}
