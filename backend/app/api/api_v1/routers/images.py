@@ -2,10 +2,10 @@ import typing as t
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, Response, Request, UploadFile, File
-
+from app.core.s3_upload.image import ImageS3Manager
 from app.core.auth import get_current_user
 from app.db.session import get_db
-from app.image.crud import get_all_images, get_image, delete_image
+from app.image.crud import get_all_images, get_image, delete_image, create_image
 from app.image.schemas import ImageOut
 
 images_router = r = APIRouter()
@@ -47,6 +47,7 @@ async def images_details(
 
 @r.post(
     "/images",
+    response_model=ImageOut
 )
 async def image_upload(
         # request: Request,
@@ -61,15 +62,15 @@ async def image_upload(
     # response = upload_to_s3(file, current_user, post_id)
     # path = response.pop('data_for_base')
     # create_file(db, post_id, path)
-
-    file_location = f"files/{file.filename}"
-    with open(file_location, "wb+") as file_object:
-        file_object.write(file.file.read())
-    # return image
+    manager = ImageS3Manager(user=current_user)
+    path = await manager.upload(file=file)
+    image = create_image(db=db, path=path)
+    return image
 
 
 @r.delete(
     "/images/{image_id}",
+    status_code=200
 )
 async def image_delete(
         request: Request,
@@ -80,5 +81,10 @@ async def image_delete(
     """
     Delete image
     """
+    image = get_image(db, image_id)
+    manager = ImageS3Manager(user=current_user)
+    image_s3_id = ImageS3Manager.get_object_id(image.path)
+    await manager.delete(image_s3_id)
+
     delete_image(db, image_id)
     return {"status": True}

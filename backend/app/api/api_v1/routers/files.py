@@ -4,7 +4,7 @@ from uuid import UUID
 from fastapi import APIRouter, Request, Depends, Response, UploadFile, File
 
 from app.core.auth import get_current_user
-from app.core.upload_data import upload_to_s3
+from app.core.s3_upload.upload_data import upload_to_s3
 from app.db.session import get_db
 from app.files.crud import get_all_files, get_file, create_file, delete_file
 from app.files.schemas import FileOut
