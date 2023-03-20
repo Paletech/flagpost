@@ -43,7 +43,7 @@ jobs:
         AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
         PYTHONPATH: .
       run: |
-        source venv/bin/activate
+        # source venv/bin/activate
         alembic upgrade head
     
     - name: Create deployment package
