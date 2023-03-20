@@ -29,8 +29,8 @@ jobs:
     - name: Create venv and Install dependencies
       working-directory: backend
       run: |
-        python -m venv venv
-        source venv/bin/activate
+        # python -m venv venv
+        # source venv/bin/activate
         pip install -r requirements.txt
 
     - name: Run migrations
