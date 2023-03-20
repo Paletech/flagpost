@@ -24,6 +24,7 @@ async def image_list(
     Get all images
     """
     images = get_all_images(db)
+    response.headers["Access-Control-Expose-Headers"] = "Content-Range"
     response.headers["Content-Range"] = f"0-9/{len(images)}"
     return images
 

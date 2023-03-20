@@ -25,6 +25,7 @@ async def post_list(
     Get all posts
     """
     posts = get_all_posts(db, skip, limit)
+    response.headers["Access-Control-Expose-Headers"] = "Content-Range"
     response.headers["Content-Range"] = f"0-9/{len(posts)}"
     return posts
 

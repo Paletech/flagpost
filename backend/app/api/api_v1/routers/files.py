@@ -26,6 +26,7 @@ async def files_list(
     Get all files
     """
     files = get_all_files(db)
+    response.headers["Access-Control-Expose-Headers"] = "Content-Range"
     response.headers["Content-Range"] = f"0-9/{len(files)}"
     return files
 

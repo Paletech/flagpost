@@ -30,6 +30,7 @@ async def categories_list(
     Get all categories
     """
     category = get_all_categories(db, skip, limit)
+    response.headers["Access-Control-Expose-Headers"] = "Content-Range"
     response.headers["Content-Range"] = f"0-9/{len(category)}"
     return category
 
