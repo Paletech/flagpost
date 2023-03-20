@@ -50,7 +50,7 @@ jobs:
       working-directory: backend
       run: |
         cd venv/lib/python3.8/site-packages
-        zip -r ../../../../lambda.zip .
+        zip -r ../../../../lambda.zip . -x "*.zip*" "*__pycache__*" "*alembic*" "*git*"
         cd ../../../../
         zip -ru lambda.zip . -x "*.zip*" "*__pycache__*" "*alembic*" "*git*"
     
