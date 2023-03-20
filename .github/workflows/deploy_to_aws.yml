@@ -51,6 +51,7 @@ jobs:
       run: |
         cd venv/lib/python3.8/site-packages
         zip -r9 ../../../../lambda.zip . -x "*alembic*" "*__pycache__*" "*.git*" "*.pyi*"
+        rm -r venv
         cd ../../../../
         zip -ru lambda.zip . -x "*.zip*" "lambda.zip" "*__pycache__*" "*alembic*" "*git*" "venv"
     
