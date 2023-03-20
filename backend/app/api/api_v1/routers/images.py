@@ -62,7 +62,6 @@ async def image_upload(
     manager = ImageS3Manager(user=current_user)
     path = await manager.upload(file=file)
     image = create_image(db=db, path=path)
-    print(image)
     return image
 
 

@@ -2,9 +2,8 @@ import os
 from abc import ABC, abstractmethod
 
 from aioboto3 import Session
-from fastapi import UploadFile
-
 from app.db.session import Base
+from fastapi import UploadFile
 
 
 class AbstractBaseS3Manager(ABC):
