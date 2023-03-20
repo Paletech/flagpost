@@ -28,10 +28,7 @@ jobs:
 
     - name: Create venv and Install dependencies
       working-directory: backend
-      run: |
-        # python -m venv venv
-        # source venv/bin/activate
-        pip install -r requirements.txt
+      run: pip install -r requirements.txt
 
     - name: Run migrations
       working-directory: backend
@@ -42,18 +39,11 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
         PYTHONPATH: .
-      run: |
-        # source venv/bin/activate
-        alembic upgrade head
+      run: alembic upgrade head
     
     - name: Create deployment package
       working-directory: backend
-      run: |
-        # cd venv/lib/python3.8/site-packages
-        # zip -r9 ../../../../lambda.zip . -x "*alembic*" "*__pycache__*" "*.git*" "*.pyi*"
-        # rm -r venv
-        # cd ../../../../
-        zip lambda.zip -r . -x "*.zip*" "lambda.zip" "*__pycache__*" "*alembic*" "*git*" "venv"
+      run: zip lambda.zip -r . -x "*.zip*" "lambda.zip" "*__pycache__*" "*alembic*" "*git*" "*venv*"
     
     - name: Upload deployment package to S3
       working-directory: backend
