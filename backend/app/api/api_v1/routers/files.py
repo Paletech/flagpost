@@ -6,7 +6,7 @@ from fastapi import APIRouter, Request, Depends, Response, UploadFile, File
 from app.core.auth import get_current_user
 from app.core.s3_upload.files import FileS3Manager
 from app.db.session import get_db
-from app.files.crud import get_all_files, get_file, create_file, delete_file
+from app.files.crud import get_all_files, get_file, delete_file
 from app.files.schemas import FileOut
 
 
@@ -78,6 +78,7 @@ async def post_upload_file(
     """
     manager = FileS3Manager(user=current_user)
     path = await manager.upload(file=file)
+    print(path)
     # file = create_file(db, None, path)
     return file
 
