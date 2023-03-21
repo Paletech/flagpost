@@ -16,7 +16,7 @@ class BaseS3ObjectManager:
      get_suffix
      """
 
-    def set_filename(self, user: User, file: UploadFile):
+    def set_filename(self, user: User, file: UploadFile) -> str:
         """Method that assign file name."""
         now = date.today()
         folder_from_now = "/" + str(now.year) + "/" + str(now.month) + "/" + str(now.day) + "/"

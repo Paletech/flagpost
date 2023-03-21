@@ -1,12 +1,12 @@
 import typing as t
 from uuid import UUID
 
-from fastapi import APIRouter, Request, Depends, Response
-
 from app.core.auth import get_current_user
 from app.db.session import get_db
-from app.post.crud import get_all_posts, get_post, create_post, delete_post, edit_post
-from app.post.schemas import PostOut, PostCreate
+from app.post.crud import (create_post, delete_post, edit_post, get_all_posts,
+                           get_post)
+from app.post.schemas import PostCreate, PostOut
+from fastapi import APIRouter, Depends, Request, Response
 
 posts_router = r = APIRouter()
 

@@ -1,14 +1,12 @@
 import typing as t
 from uuid import UUID
 
-from fastapi import APIRouter, Request, Depends, Response, UploadFile, File
-
 from app.core.auth import get_current_user
 from app.core.s3_upload.files import FileS3Manager
 from app.db.session import get_db
-from app.files.crud import get_all_files, get_file, delete_file
+from app.files.crud import create_file, delete_file, get_all_files, get_file
 from app.files.schemas import FileOut
-
+from fastapi import APIRouter, Depends, File, Request, Response, UploadFile
 
 files_router = r = APIRouter()
 
@@ -48,28 +46,12 @@ async def files_details(
     return file
 
 
-# @r.post(
-#     "/files/create",
-#     response_model=FileOut,
-# )
-# async def file_create(
-#         request: Request,
-#         file: FileCreate,
-#         db=Depends(get_db),
-#         current_user=Depends(get_current_user),
-# ):
-#     """
-#     Create file
-#     """
-#     return create_file(db, file)
-
-
 @r.post(
-    "/files",
+    "/files/{post_id}",
 )
 async def post_upload_file(
         # request: Request,
-        # post_id: t.Union[UUID, None],
+        post_id: UUID,
         file: UploadFile = File(...),
         db=Depends(get_db),
         current_user=Depends(get_current_user),
@@ -77,10 +59,8 @@ async def post_upload_file(
     """
     Upload file
     """
-    manager = FileS3Manager(user=current_user)
-    path = await manager.upload(file=file)
-    print(path)
-    # file = create_file(db, None, path)
+    path = await FileS3Manager(user=current_user).upload(file=file)
+    file = create_file(db, post_id, path)
     return file
 
 
@@ -96,5 +76,6 @@ async def file_delete(
     """
     Delete file
     """
-    delete_file(db, file_id)
+    file = delete_file(db, file_id)
+    await FileS3Manager(user=current_user).delete(file)
     return {"status": True}

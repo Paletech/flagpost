@@ -1,15 +1,13 @@
+import typing as t
 from uuid import UUID
 
-from fastapi import APIRouter, Request, Depends, Response
-import typing as t
-
-from app.category.schemas import CategoryOut, CategoryCreate, CategoryEdit
-from app.category.crud import get_all_categories, get_my_category, create_category, delete_category, edit_category, \
-    get_category
-
-from app.db.session import get_db
-
+from app.category.crud import (create_category, delete_category, edit_category,
+                               get_all_categories, get_category,
+                               get_my_category)
+from app.category.schemas import CategoryCreate, CategoryEdit, CategoryOut
 from app.core.auth import get_current_user
+from app.db.session import get_db
+from fastapi import APIRouter, Depends, Request, Response
 
 categories_router = r = APIRouter()
 

@@ -1,12 +1,13 @@
 import typing as t
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Response, Request, UploadFile, File
-from app.core.s3_upload.images import ImageS3Manager
 from app.core.auth import get_current_user
+from app.core.s3_upload.images import ImageS3Manager
 from app.db.session import get_db
-from app.image.crud import get_all_images, get_image, delete_image, create_image
+from app.image.crud import (create_image, delete_image, get_all_images,
+                            get_image)
 from app.image.schemas import ImageOut
+from fastapi import APIRouter, Depends, File, Request, Response, UploadFile
 
 images_router = r = APIRouter()
 
@@ -80,7 +81,5 @@ async def image_delete(
     Delete image
     """
     image = delete_image(db, image_id)
-    manager = ImageS3Manager(user=current_user)
-    await manager.delete(image)
-
+    await ImageS3Manager(user=current_user).delete(image)
     return {"status": True}
