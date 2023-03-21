@@ -9,8 +9,8 @@ from fastapi import UploadFile
 class AbstractBaseS3Manager(ABC):
     """Base Abstract class that manages interaction with s3 bucket."""
     __session = Session(
-        aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID"),
-        aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY")
+        aws_access_key_id=os.getenv("AWS_KEY_ID"),
+        aws_secret_access_key=os.getenv("AWS_KEY")
     )
     BASE_BUCKET_URL_PATTERN = "https://{0}.s3.amazonaws.com/{1}"
 
