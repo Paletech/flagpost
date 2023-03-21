@@ -4,9 +4,9 @@ from uuid import UUID
 from fastapi import APIRouter, Request, Depends, Response, UploadFile, File
 
 from app.core.auth import get_current_user
-from app.core.upload_data import upload_to_s3
+from app.core.s3_upload.files import FileS3Manager
 from app.db.session import get_db
-from app.files.crud import get_all_files, get_file, create_file, delete_file
+from app.files.crud import get_all_files, get_file, delete_file
 from app.files.schemas import FileOut
 
 
@@ -65,11 +65,11 @@ async def files_details(
 
 
 @r.post(
-    "/upload_file/{post_id}",
+    "/files",
 )
 async def post_upload_file(
         # request: Request,
-        post_id: UUID,
+        # post_id: t.Union[UUID, None],
         file: UploadFile = File(...),
         db=Depends(get_db),
         current_user=Depends(get_current_user),
@@ -77,10 +77,11 @@ async def post_upload_file(
     """
     Upload file
     """
-    response = upload_to_s3(file, current_user, post_id)
-    path = response.pop('data_for_base')
-    create_file(db, post_id, path)
-    return response['response']['fields']
+    manager = FileS3Manager(user=current_user)
+    path = await manager.upload(file=file)
+    print(path)
+    # file = create_file(db, None, path)
+    return file
 
 
 @r.delete(

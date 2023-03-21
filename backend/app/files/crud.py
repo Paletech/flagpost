@@ -1,4 +1,5 @@
 from uuid import UUID
+from typing import Union
 
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
@@ -18,7 +19,7 @@ def get_file(db: Session, file_id: UUID):
     return file
 
 
-def create_file(db: Session, post_id, path):
+def create_file(db: Session, post_id: Union[UUID, None], path: str):
     if post_id is not None:
         if not db.query(literal(True)).filter(models.Posts.id == post_id).first():
             raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Post not found")

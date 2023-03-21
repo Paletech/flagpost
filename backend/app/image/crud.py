@@ -20,10 +20,10 @@ def get_image(db: Session, image_id: UUID):
     return image
 
 
-def create_image(db: Session, post_id, path):
+def create_image(db: Session, path):
     db_image = models.Images(
         path=path,
-        post_id=post_id,
+        # post_id=post_id,
     )
 
     db.add(db_image)
@@ -33,9 +33,11 @@ def create_image(db: Session, post_id, path):
 
 
 def delete_image(db: Session, image: UUID):
+
     image = get_image(db, image)
     if not image:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="File not found")
+
     db.delete(image)
     db.commit()
     return image
