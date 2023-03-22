@@ -47,7 +47,7 @@ async def files_details(
 
 
 @r.post(
-    "/files/{post_id}",
+    "/posts/{post_id}/files",
 )
 async def post_upload_file(
         # request: Request,
