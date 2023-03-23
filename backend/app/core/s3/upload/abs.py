@@ -1,17 +1,14 @@
-import os
 from abc import ABC, abstractmethod
 
-from aioboto3 import Session
 from app.db.session import Base
 from fastapi import UploadFile
+from app.core.s3.session import AWSSession
 
 
 class AbstractBaseS3Manager(ABC):
+
     """Base Abstract class that manages interaction with s3 bucket."""
-    __session = Session(
-        aws_access_key_id=os.getenv("AWS_KEY_ID"),
-        aws_secret_access_key=os.getenv("AWS_KEY")
-    )
+    __session = AWSSession()
     BASE_BUCKET_URL_PATTERN = "https://{0}.s3.amazonaws.com/{1}"
 
     @classmethod

@@ -1,6 +1,6 @@
 import os
 
-from app.core.s3_upload.base import BaseS3Manager
+from app.core.s3.upload.base import BaseS3Manager
 
 
 class FileS3Manager(BaseS3Manager):

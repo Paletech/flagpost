@@ -4,7 +4,7 @@ from typing import Union
 from urllib.parse import urlparse
 from uuid import uuid4
 
-from app.core.s3_upload.abs import AbstractBaseS3Manager
+from app.core.s3.upload.abs import AbstractBaseS3Manager
 from app.db.models import Files, Images, User
 from fastapi import UploadFile
 

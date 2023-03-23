@@ -2,7 +2,7 @@ import typing as t
 from uuid import UUID
 
 from app.core.auth import get_current_user
-from app.core.s3_upload.files import FileS3Manager
+from app.core.s3.upload.files import FileS3Manager
 from app.db.session import get_db
 from app.files.crud import create_file, delete_file, get_all_files, get_file
 from app.files.schemas import FileOut

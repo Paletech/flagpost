@@ -7,15 +7,21 @@ import {
   BooleanField,
   EmailField,
   EditButton,
+    ImageField
 } from 'react-admin';
 
-export const ImageList: FC = (props) => (
+export const ImageList: FC = (props) =>{
+
+ return (
   <List {...props}>
     <Datagrid rowClick="edit">
       <TextField source="id" />
-      <TextField source="path" />
-      <BooleanField source="public_path" />
+      <ImageField
+          source="path"
+      />
       <EditButton />
     </Datagrid>
   </List>
 );
+}
+

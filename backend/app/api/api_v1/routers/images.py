@@ -2,7 +2,7 @@ import typing as t
 from uuid import UUID
 
 from app.core.auth import get_current_user
-from app.core.s3_upload.images import ImageS3Manager
+from app.core.s3.upload.images import ImageS3Manager
 from app.db.session import get_db
 from app.image.crud import (create_image, delete_image, get_all_images,
                             get_image)

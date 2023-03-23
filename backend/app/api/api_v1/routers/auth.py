@@ -1,12 +1,29 @@
+import os
 from datetime import timedelta
 
 from app.core import security
-from app.core.auth import authenticate_user, sign_up_new_user
+from app.core.auth import authenticate_user, sign_up_new_user, get_current_user
+from app.core.s3.session import AWSSession
 from app.db.session import get_db
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 
 auth_router = r = APIRouter()
+
+
+@r.get("/aws_credentials")
+async def get_sts_credentials(current_user=Depends(get_current_user)):
+    role_arn = os.getenv("AWS_ROLE_ARN")
+    session = AWSSession()
+    async with session.client("sts") as sts:
+        assumed_role = await sts.assume_role(RoleArn=role_arn, RoleSessionName="admin-session")
+
+    credentials = assumed_role["Credentials"]
+    return {
+        "accessKeyId": credentials.get("AccessKeyId"),
+        "secretAccessKey": credentials.get("SecretAccessKey"),
+        "sessionToken": credentials.get("SessionToken")
+    }
 
 
 @r.post("/token")
