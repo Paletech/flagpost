@@ -11,6 +11,7 @@ jobs:
   tests:
     uses: ./.github/workflows/test_and_lint.yaml
   deploy-backend:
+    needs: [ tests ]
     runs-on: ubuntu-latest
     
     
