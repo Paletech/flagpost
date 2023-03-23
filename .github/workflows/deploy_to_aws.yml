@@ -9,7 +9,7 @@ on:
 
 jobs:
   tests:
-    uses: .github/workflows/test_and_lint.yaml@main
+    uses: ./.github/workflows/test_and_lint.yaml
   deploy-backend:
     runs-on: ubuntu-latest
     
