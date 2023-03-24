@@ -11,7 +11,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 auth_router = r = APIRouter()
 
 
-@r.get("/aws_credentials")
+@r.get("/sts")
 async def get_sts_credentials(current_user=Depends(get_current_user)):
     role_arn = os.getenv("AWS_ROLE_ARN")
     session = AWSSession()

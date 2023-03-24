@@ -5,9 +5,8 @@ import {
   Datagrid,
   TextField,
   BooleanField,
-  EmailField,
   EditButton,
-  ReferenceField
+  ReferenceField, ImageField
 } from 'react-admin';
 
 export const CategoryList: FC = (props) => (
@@ -17,10 +16,8 @@ export const CategoryList: FC = (props) => (
       <TextField source="name" />
       <TextField source="color" />
       <BooleanField source="selected" />
-
-
       <ReferenceField source="image_id" reference="images">
-            <TextField source="path" />
+        <ImageField source="path" />
       </ReferenceField>
 
       <ReferenceField source="user_id" reference="users">
