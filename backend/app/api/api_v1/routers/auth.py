@@ -1,6 +1,5 @@
 import os
 from datetime import timedelta
-
 from app.core import security
 from app.core.auth import authenticate_user, sign_up_new_user, get_current_user
 from app.core.s3.session import AWSSession
@@ -11,14 +10,13 @@ from fastapi.security import OAuth2PasswordRequestForm
 auth_router = r = APIRouter()
 
 
-@r.get("/sts")
+@r.get("/aws_token")
 async def get_sts_credentials(current_user=Depends(get_current_user)):
     role_arn = os.getenv("AWS_ROLE_ARN")
     session = AWSSession()
     async with session.client("sts") as sts:
-        assumed_role = await sts.assume_role(RoleArn=role_arn, RoleSessionName="admin-session")
-
-    credentials = assumed_role["Credentials"]
+        assumed_role = await sts.assume_role(RoleArn=role_arn, RoleSessionName="image-session")
+    credentials: dict = assumed_role["Credentials"]
     return {
         "accessKeyId": credentials.get("AccessKeyId"),
         "secretAccessKey": credentials.get("SecretAccessKey"),
@@ -46,7 +44,7 @@ async def login(
     else:
         permissions = "user"
     access_token = security.create_access_token(
-        data={"sub": user.email, "permissions": permissions},
+        data={"sub": user.email, "permissions": permissions, "userId": str(user.id)},
         expires_delta=access_token_expires,
     )
 

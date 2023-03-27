@@ -1,13 +1,18 @@
+import os
 import typing as t
 from uuid import UUID
 
 from app.core.auth import get_current_user
 from app.core.s3.upload.images import ImageS3Manager
 from app.db.session import get_db
-from app.image.crud import (create_image, delete_image, get_all_images,
-                            get_image)
-from app.image.schemas import ImageOut
-from fastapi import APIRouter, Depends, File, Request, Response, UploadFile
+from app.image.crud import (
+    create_image,
+    delete_image,
+    get_all_images,
+    get_image
+)
+from app.image.schemas import ImageOut, ImageCreate
+from fastapi import APIRouter, Depends, Request, Response
 
 images_router = r = APIRouter()
 
@@ -53,18 +58,21 @@ async def images_details(
 )
 async def image_upload(
         # request: Request,
-        file: UploadFile = File(...),
+        # file: UploadFile = File(...),
         # file: str,
+        image: ImageCreate,
         db=Depends(get_db),
         current_user=Depends(get_current_user),
+
 ):
     """
     Upload image
     """
-    manager = ImageS3Manager(user=current_user)
-    path = await manager.upload(file=file)
-    image = create_image(db=db, path=path)
-    return image
+    # manager = ImageS3Manager(user=current_user)
+    # path = await manager.upload(file=file)
+    url = "https://{0}.s3.amazonaws.com/{1}".format(os.getenv("S3_IMAGE_BUCKET"), image.path)
+    image_db = create_image(db=db, path=url)
+    return image_db
 
 
 @r.delete(

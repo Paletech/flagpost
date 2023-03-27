@@ -1,5 +1,24 @@
 import decodeJwt from 'jwt-decode';
 import {BASE_URL} from "../config";
+const AWS = require('aws-sdk');
+
+export const getS3 = async () => {
+  const response = await fetch(BASE_URL + "api/aws_token", {
+    headers: {
+      "Authorization": `Bearer ${localStorage.getItem('token')}`
+    }
+  });
+  const data = await response.json();
+  const s3 = new AWS.S3({
+    region: 'us-east-1'
+  });
+  s3.config.update({
+    accessKeyId: data["accessKeyId"],
+    secretAccessKey: data['secretAccessKey'],
+    sessionToken: data['sessionToken']
+  })
+  return s3
+}
 
 export const isAuthenticated = () => {
   const permissions = localStorage.getItem('permissions');
@@ -51,8 +70,8 @@ export const login = async (email: string, password: string) => {
     const decodedToken: any = decodeJwt(data['access_token']);
     localStorage.setItem('token', data['access_token']);
     localStorage.setItem('permissions', decodedToken.permissions);
+    localStorage.setItem('userId', data['userId'])
   }
-
   return data;
 };
 

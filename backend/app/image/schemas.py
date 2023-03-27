@@ -20,6 +20,7 @@ class ImageOut(ImageBase):
 
 
 class ImageCreate(ImageBase):
+    path: str
 
     class Config:
         orm_mode = True

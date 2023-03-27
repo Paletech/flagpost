@@ -29,6 +29,7 @@ const authProvider = {
         }
         localStorage.setItem('token', access_token);
         localStorage.setItem('permissions', decodedToken.permissions);
+        localStorage.setItem('userId', decodedToken.userId);
       });
   },
   logout: () => {
