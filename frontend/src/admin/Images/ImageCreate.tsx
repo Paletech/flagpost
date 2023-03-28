@@ -1,9 +1,7 @@
 import React, {FC, useState} from 'react';
 import {BASE_URL} from "../../config";
 import {Button} from "@material-ui/core";
-import {getS3} from "../../utils";
-const { v4 } = require('uuid');
-
+import {setFileName, uploadToS3} from "../s3Upload";
 
 export const ImageCreate: FC = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -12,11 +10,7 @@ export const ImageCreate: FC = () => {
       setSelectedFile(event.target.files[0]);
     }
   };
-  const setImageName = (user_id: string | null, file: File) => {
-    const now = new Date();
-    const folderFromNow = `/${now.getFullYear()}/${now.getMonth() + 1}/${now.getDate()}/`;
-    return `${user_id}${folderFromNow}${v4()}${file.name}`;
-  }
+
   const sendImageDataToAPI = async (filename: string) => {
     const token = localStorage.getItem("token")
     const response = await fetch(BASE_URL + 'api/v1/images', {
@@ -30,21 +24,12 @@ export const ImageCreate: FC = () => {
       })
       });
   }
-  const uploadToS3 = async (file: File, filename: string) =>{
-    const s3 = await getS3();
-    const params = {
-      Bucket: 'flagpost-images',
-      Key: filename,
-      Body: file,
-    };
 
-   await s3.putObject(params).promise()
-  }
   const handleUpload = async () => {
     const userId = localStorage.getItem('userId')
     if (selectedFile) {
-      const filename = setImageName(userId, selectedFile)
-      await uploadToS3(selectedFile, filename)
+      const filename = setFileName(userId, selectedFile)
+      await uploadToS3(selectedFile, filename, 'flagpost-images')
       await sendImageDataToAPI(filename)
   }
   }

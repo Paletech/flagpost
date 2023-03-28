@@ -1,5 +1,5 @@
 frontend/node_modules
-
+locust_test/
 # Created by https://www.toptal.com/developers/gitignore/api/python,django,pycharm
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,django,pycharm
 
