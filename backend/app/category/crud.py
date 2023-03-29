@@ -1,46 +1,51 @@
+from typing import List
 from uuid import UUID
 
 from fastapi import HTTPException, status
-from sqlalchemy.orm import Session
-import typing as t
-from sqlalchemy.sql.expression import literal
-from . import schemas
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db import models
-
-
-def get_all_categories(db: Session, skip: int, limit: int) -> t.List[schemas.CategoryOut]:
-    return db.query(models.Categories).offset(skip).limit(limit).all()
+from app.category.schemas import CategoryCreate, CategoryEdit, CategoryOut
+from app.db.models import Categories, Images
 
 
-def get_my_category(db: Session, skip: int, limit: int, user_id: UUID):
-    category = db.query(models.Categories).filter(
-        models.Categories.user_id == user_id.id).offset(skip).limit(limit).all()
+async def get_all_categories(db: AsyncSession, skip: int, limit: int) -> List[CategoryOut]:
+    result = await db.execute(select(Categories).offset(skip).limit(limit))
+    categories = result.scalars().all()
+    return categories
+
+
+async def get_my_category(db: AsyncSession, skip: int, limit: int, user_id: UUID):
+    result = await db.execute(select(Categories).filter_by(user_id=user_id))
+    category = result.scalars().all()
     if not category:
         raise HTTPException(status_code=404, detail="Category not found")
     return category
 
 
-def get_category(db: Session, category_id: UUID):
-    category = db.query(models.Categories).filter(models.Categories.id == category_id).first()
+async def get_category(db: AsyncSession, category_id: UUID):
+    result = await db.execute(select(Categories).filter_by(id=category_id))
+    category = result.scalars().first()
     if not category:
         raise HTTPException(status_code=404, detail="Category not found")
     return category
 
 
-def create_category(db: Session, user_id: UUID, category: schemas.CategoryCreate):
+async def create_category(db: AsyncSession, user_id: UUID, category: CategoryCreate):
+
     if category.image_id is not None:
-        if not db.query(literal(True)).filter(models.Images.id == category.image_id).first():
+        image = await db.execute(select(Images).filter_by(id=category.image_id))
+        if not image.scalars().first():
             raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Image not found")
-    db_category = models.Categories(
+    db_category = Categories(
         user_id=user_id,
         name=category.name,
         color=category.color,
         image_id=category.image_id,
     )
     db.add(db_category)
-    db.commit()
-    db.refresh(db_category)
+    await db.commit()
+    await db.refresh(db_category)
     return db_category
 
 
@@ -57,27 +62,27 @@ def create_category(db: Session, user_id: UUID, category: schemas.CategoryCreate
 #     return db_category
 
 
-def delete_category(db: Session, category: UUID):
-    category = get_category(db, category)
+async def delete_category(db: AsyncSession, category: UUID):
+    category = await get_category(db, category)
     if not category:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Category not found")
-    db.delete(category)
-    db.commit()
+    await db.delete(category)
+    await db.commit()
     return category
 
 
-def edit_category(db: Session, category_id: UUID, category: schemas.CategoryEdit) -> schemas.CategoryOut:
-    db_category = get_category(db, category_id)
+async def edit_category(db: AsyncSession, category_id: UUID, category: CategoryEdit) -> CategoryOut:
+    db_category = await get_category(db, category_id)
     if not db_category:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Category not found")
     update_data = category.dict(exclude_unset=True)
     if category.image_id and update_data["image_id"] is not None:
-        if not db.query(models.Categories.id).filter(models.Images.id == update_data["image_id"]).first():
+        if not db.query(Categories.id).filter(Images.id == update_data["image_id"]).first():
             raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Image not found")
     for key, value in update_data.items():
         setattr(db_category, key, value)
 
     db.add(db_category)
-    db.commit()
-    db.refresh(db_category)
+    await db.commit()
+    await db.refresh(db_category)
     return db_category

@@ -1,15 +1,13 @@
 import datetime
-from uuid import UUID
-
-from pydantic import BaseModel
-from pydantic.color import Color
 import typing as t
 from typing import List, Optional, Set
+from uuid import UUID
 
 from fastapi import FastAPI
-from pydantic import BaseModel, HttpUrl, Field
+from pydantic import BaseModel, Field, HttpUrl
+from pydantic.color import Color
 
-from app.image.schemas import ImageOut, ImageBase
+from app.image.schemas import ImageBase, ImageOut
 
 
 class CategoryBase(BaseModel):

@@ -1,13 +1,14 @@
 import typing as t
 from uuid import UUID
 
+from fastapi import APIRouter, Depends, Request, Response
+
 from app.category.crud import (create_category, delete_category, edit_category,
                                get_all_categories, get_category,
                                get_my_category)
 from app.category.schemas import CategoryCreate, CategoryEdit, CategoryOut
 from app.core.auth import get_current_user
 from app.db.session import get_db
-from fastapi import APIRouter, Depends, Request, Response
 
 categories_router = r = APIRouter()
 
@@ -27,7 +28,7 @@ async def categories_list(
     """
     Get all categories
     """
-    category = get_all_categories(db, skip, limit)
+    category = await get_all_categories(db, skip, limit)
     response.headers["Access-Control-Expose-Headers"] = "Content-Range"
     response.headers["Content-Range"] = f"0-9/{len(category)}"
     return category
@@ -46,7 +47,8 @@ async def category_details(
     """
     Get category details
     """
-    return get_category(db, category_id)
+    category = await get_category(db, category_id)
+    return category
 
 
 @r.get(
@@ -64,7 +66,7 @@ async def categories_details(
     Get my category
     """
 
-    category = get_my_category(db, skip, limit, user_id=current_user)
+    category = await get_my_category(db, skip, limit, user_id=current_user.id)
     return category
 
 
@@ -97,7 +99,8 @@ async def category_create(
     """
     Create category
     """
-    return create_category(db, current_user.id, category)
+    category = await create_category(db, current_user.id, category)
+    return category
 
 
 @r.delete(
@@ -112,8 +115,8 @@ async def categories_delete(
     """
     Delete category
     """
-
-    return delete_category(db, category_id)
+    category = await delete_category(db, category_id)
+    return category
 
 
 @r.put(
@@ -130,5 +133,5 @@ async def categories_update(
     """
     Update category
     """
-
-    return edit_category(db, category_id, category)
+    category = await edit_category(db, category_id, category)
+    return category
