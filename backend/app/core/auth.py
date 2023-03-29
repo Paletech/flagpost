@@ -60,11 +60,11 @@ async def authenticate_user(db: AsyncSessionLocal, email: str, password: str):
     return user
 
 
-def sign_up_new_user(db, email: str, password: str):
-    user = get_user_by_email(db, email)
+async def sign_up_new_user(db, email: str, password: str):
+    user = await get_user_by_email(db, email)
     if user:
         return False  # User already exists
-    new_user = create_user(
+    new_user = await create_user(
         db,
         schemas.UserCreate(
             email=email,

@@ -57,7 +57,7 @@ async def login(
 async def signup(
     db=Depends(get_db), form_data: OAuth2PasswordRequestForm = Depends()
 ):
-    user = sign_up_new_user(db, form_data.username, form_data.password)
+    user = await sign_up_new_user(db, form_data.username, form_data.password)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,

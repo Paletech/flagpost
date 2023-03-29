@@ -1,12 +1,13 @@
 import typing as t
 from uuid import UUID
 
+from fastapi import APIRouter, Depends, Request, Response
+
 from app.core.auth import get_current_user
 from app.db.session import get_db
 from app.post.crud import (create_post, delete_post, edit_post, get_all_posts,
                            get_post)
 from app.post.schemas import PostCreate, PostOut
-from fastapi import APIRouter, Depends, Request, Response
 
 posts_router = r = APIRouter()
 
@@ -24,7 +25,7 @@ async def post_list(
     """
     Get all posts
     """
-    posts = get_all_posts(db, skip, limit)
+    posts = await get_all_posts(db, skip, limit)
     response.headers["Access-Control-Expose-Headers"] = "Content-Range"
     response.headers["Content-Range"] = f"0-9/{len(posts)}"
     return posts
@@ -43,7 +44,7 @@ async def post_details(
     """
     Get category by id
     """
-    post = get_post(db, post_id)
+    post = await get_post(db, post_id)
     return post
 
 
@@ -61,7 +62,8 @@ async def post_create(
     """
     Create post
     """
-    return create_post(db, current_user.id, post)
+    post = await create_post(db, current_user.id, post)
+    return post
 
 
 @r.delete(
@@ -76,8 +78,8 @@ async def post_delete(
     """
     Delete post
     """
-    delete_post(db, current_user, post_id)
-    return {"status": True}
+    post = await delete_post(db=db, user_id=current_user.id, post_id=post_id)
+    return post
 
 
 @r.put(
@@ -94,5 +96,5 @@ async def post_update(
     """
     Update post
     """
-
-    return edit_post(db, current_user, post_id, post)
+    post = await edit_post(db=db, user_id=current_user.id, post_id=post_id, post=post)
+    return post

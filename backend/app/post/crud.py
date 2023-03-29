@@ -1,52 +1,57 @@
+from typing import List
 from uuid import UUID
 
 from fastapi import HTTPException, status
-from sqlalchemy.orm import Session
-import typing as t
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql.expression import literal
-from . import schemas
 
-from app.db import models
-
-
-def get_all_posts(db: Session, skip: int = 0, limit: int = 100) -> t.List[schemas.PostOut]:
-    return db.query(models.Posts).offset(skip).limit(limit).all()
+from app.db.models import Categories, Files, Posts
+from app.post.schemas import PostBase, PostCreate, PostOut
 
 
-def get_post(db: Session, post_id: UUID):
-    post = db.query(models.Posts).filter(models.Posts.id == post_id).first()
+async def get_all_posts(db: AsyncSession, skip: int = 0, limit: int = 100) -> List[PostOut]:
+    result = await db.execute(select(Posts).offset(skip).limit(limit))
+    posts = result.scalars().all()
+    return posts
+
+
+async def get_post(db: AsyncSession, post_id: UUID):
+    result = await db.execute(select(Posts).filter_by(id=post_id))
+    post = result.scalars().first()
     if not post:
         raise HTTPException(status_code=404, detail="Post not found")
     return post
 
 
-def get_my_post(db: Session, post_id: UUID, user_id: UUID):
-    post = db.query(models.Posts).filter(models.Posts.user_id == user_id.id, models.Posts.id == post_id).first()
+async def get_my_post(db: AsyncSession, post_id: UUID, user_id: UUID):
+    result = await db.execute(select(Posts).filter_by(user_id=user_id, id=post_id))
+    post = result.scalars().first()
     if not post:
         raise HTTPException(status_code=404, detail="Post not found")
     return post
 
 
-def create_post(db: Session, user_id: UUID, post: schemas.PostCreate):
+async def create_post(db: AsyncSession, user_id: UUID, post: PostCreate):
 
-    db_post = models.Posts(
+    db_post = Posts(
         user_id=user_id,
         text=post.text,
         type=post.type,
     )
 
     if post.files and post.files is not None:
-        if not db.query(literal(True)).filter(models.Files.id == post.files).first():
+        if not db.query(literal(True)).filter(Files.id == post.files).first():
             raise HTTPException(status.HTTP_404_NOT_FOUND, detail="File not found")
         else:
-            files = db.query(models.Files).get(post.files)
+            files = db.query(Files).get(post.files)
             db_post.files.append(files)
 
     if post.categories and post.categories is not None:
-        if not db.query(literal(True)).filter(models.Categories.id == post.categories).first():
+        if not db.query(literal(True)).filter(Categories.id == post.categories).first():
             raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Category not found")
         else:
-            categories = db.query(models.Categories).get(post.categories)
+            categories = db.query(Categories).get(post.categories)
             # db_post.categories.add(post.categories)
             # categories.id = str(categories.id)
             # db_post.categories.user_id = str(categories.user_id)
@@ -60,35 +65,37 @@ def create_post(db: Session, user_id: UUID, post: schemas.PostCreate):
 
     # db_post.files.append(files)
     db.add(db_post)
-    db.commit()
-    db.refresh(db_post)
+    await db.commit()
+    await db.refresh(db_post)
     return db_post
 
 
-def delete_post(db: Session, user_id: UUID, post_id: UUID):
-    post = get_my_post(db, post_id, user_id)
+async def delete_post(db: AsyncSession, user_id: UUID, post_id: UUID):
+    post = await get_my_post(db, post_id, user_id)
     if not post:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Post not found")
-    db.delete(post)
-    db.commit()
+    await db.delete(post)
+    await db.commit()
     return post
 
 
-def edit_post(db: Session, user_id: UUID, post_id: UUID, post: schemas.PostBase) -> schemas.PostOut:
-    db_post = get_my_post(db, post_id, user_id)
+async def edit_post(db: AsyncSession, user_id: UUID, post_id: UUID, post: PostBase) -> PostOut:
+    db_post = await get_my_post(db, post_id, user_id)
     if not db_post:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Post not found")
     update_data = post.dict(exclude_unset=True)
     if update_data["files"] is not None:
-        if not db.query(models.Posts.id).filter(models.Files.id == update_data["files"]).first():
+        files = await db.execute(select(Posts.id).filter_by(files=update_data.get('files')))
+        file = files.scalars().first()
+        if not file:
             raise HTTPException(status.HTTP_404_NOT_FOUND, detail="File not found")
 
     if update_data["categories"] is not None:
-        if not db.query(models.Posts.id).filter(models.Categories.id == update_data["categories"]).first():
+        if not db.query(Posts.id).filter(Categories.id == update_data["categories"]).first():
             raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Category not found")
 
-    files = db.query(models.Files).get(update_data.pop("files"))
-    categories = db.query(models.Categories).get(update_data.pop("categories"))
+    files = db.query(Files).get(update_data.pop("files"))
+    categories = db.query(Categories).get(update_data.pop("categories"))
     db_post.categories = [categories]
     db_post.files.append(files)
 

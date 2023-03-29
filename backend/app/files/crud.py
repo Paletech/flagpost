@@ -16,7 +16,7 @@ async def get_all_files(db: AsyncSession, skip: int = 0, limit: int = 100):
 
 async def get_file(db: AsyncSession, file_id: UUID):
     result = await db.execute(select(Files).filter_by(id=file_id))
-    file = result.scalar().first()
+    file = result.scalars().first()
     if not file:
         raise HTTPException(status_code=404, detail="File not found")
     return file
@@ -25,7 +25,7 @@ async def get_file(db: AsyncSession, file_id: UUID):
 async def create_file(db: AsyncSession, post_id: Union[UUID, None], path: str):
     if post_id is not None:
         post = await db.execute(select(Posts).filter_by(id=post_id))
-        if not post.scalar().first():
+        if not post.scalars().first():
             raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Post not found")
 
     db_files = Files(
