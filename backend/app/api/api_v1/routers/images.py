@@ -2,17 +2,14 @@ import os
 import typing as t
 from uuid import UUID
 
+from fastapi import APIRouter, Depends, Request, Response
+
 from app.core.auth import get_current_user
 from app.core.s3.upload.images import ImageS3Manager
 from app.db.session import get_db
-from app.image.crud import (
-    create_image,
-    delete_image,
-    get_all_images,
-    get_image
-)
-from app.image.schemas import ImageOut, ImageCreate
-from fastapi import APIRouter, Depends, Request, Response
+from app.image.crud import (create_image, delete_image, get_all_images,
+                            get_image)
+from app.image.schemas import ImageCreate, ImageOut
 
 images_router = r = APIRouter()
 
@@ -29,7 +26,7 @@ async def image_list(
     """
     Get all images
     """
-    images = get_all_images(db)
+    images = await get_all_images(db)
     response.headers["Access-Control-Expose-Headers"] = "Content-Range"
     response.headers["Content-Range"] = f"0-9/{len(images)}"
     return images
@@ -48,7 +45,8 @@ async def images_details(
     """
     Get image by id
     """
-    image = get_image(db, image_id)
+    image = await get_image(db, image_id)
+    print(image.id)
     return image
 
 
@@ -71,7 +69,7 @@ async def image_upload(
     # manager = ImageS3Manager(user=current_user)
     # path = await manager.upload(file=file)
     url = "https://{0}.s3.amazonaws.com/{1}".format(os.getenv("S3_IMAGE_BUCKET"), image.path)
-    image_db = create_image(db=db, path=url)
+    image_db = await create_image(db=db, path=url)
     return image_db
 
 
@@ -88,6 +86,6 @@ async def image_delete(
     """
     Delete image
     """
-    image = delete_image(db, image_id)
+    image = await delete_image(db, image_id)
     await ImageS3Manager(user=current_user).delete(image)
-    return {"status": True}
+    return image

@@ -1,44 +1,48 @@
-from uuid import UUID
 from typing import Union
+from uuid import UUID
 
 from fastapi import HTTPException, status
-from sqlalchemy.orm import Session
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db import models
-from sqlalchemy.sql.expression import literal
-
-
-def get_all_files(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Files).offset(skip).limit(limit).all()
+from app.db.models import Files, Posts
 
 
-def get_file(db: Session, file_id: UUID):
-    file = db.query(models.Files).filter(models.Files.id == file_id).first()
+async def get_all_files(db: AsyncSession, skip: int = 0, limit: int = 100):
+    result = await db.execute(select(Files).offset(skip).limit(limit))
+    files = result.scalars().all()
+    return files
+
+
+async def get_file(db: AsyncSession, file_id: UUID):
+    result = await db.execute(select(Files).filter_by(id=file_id))
+    file = result.scalar().first()
     if not file:
         raise HTTPException(status_code=404, detail="File not found")
     return file
 
 
-def create_file(db: Session, post_id: Union[UUID, None], path: str):
+async def create_file(db: AsyncSession, post_id: Union[UUID, None], path: str):
     if post_id is not None:
-        if not db.query(literal(True)).filter(models.Posts.id == post_id).first():
+        post = await db.execute(select(Posts).filter_by(id=post_id))
+        if not post.scalar().first():
             raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Post not found")
 
-    db_files = models.Files(
+    db_files = Files(
         path=path,
         post_id=post_id,
     )
 
     db.add(db_files)
-    db.commit()
-    db.refresh(db_files)
+    await db.commit()
+    await db.refresh(db_files)
     return db_files
 
 
-def delete_file(db: Session, file: UUID):
-    file = get_file(db, file)
+async def delete_file(db: AsyncSession, file: UUID):
+    file = await get_file(db, file)
     if not file:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="File not found")
-    db.delete(file)
-    db.commit()
+    await db.delete(file)
+    await db.commit()
     return file

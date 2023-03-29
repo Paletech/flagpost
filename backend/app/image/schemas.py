@@ -1,8 +1,7 @@
+import datetime
 from uuid import UUID
 
 from pydantic import BaseModel
-import typing as t
-import datetime
 
 
 class ImageBase(BaseModel):

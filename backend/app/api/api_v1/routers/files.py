@@ -1,12 +1,13 @@
 import typing as t
 from uuid import UUID
 
+from fastapi import APIRouter, Depends, File, Request, Response, UploadFile
+
 from app.core.auth import get_current_user
 from app.core.s3.upload.files import FileS3Manager
 from app.db.session import get_db
 from app.files.crud import create_file, delete_file, get_all_files, get_file
 from app.files.schemas import FileOut
-from fastapi import APIRouter, Depends, File, Request, Response, UploadFile
 
 files_router = r = APIRouter()
 
@@ -23,7 +24,7 @@ async def files_list(
     """
     Get all files
     """
-    files = get_all_files(db)
+    files = await get_all_files(db)
     response.headers["Access-Control-Expose-Headers"] = "Content-Range"
     response.headers["Content-Range"] = f"0-9/{len(files)}"
     return files
@@ -42,7 +43,7 @@ async def files_details(
     """
     Get files by id
     """
-    file = get_file(db, file_id)
+    file = await get_file(db, file_id)
     return file
 
 
@@ -60,7 +61,7 @@ async def post_upload_file(
     Upload file
     """
     path = await FileS3Manager(user=current_user).upload(file=file)
-    file = create_file(db, post_id, path)
+    file = await create_file(db, post_id, path)
     return file
 
 
@@ -76,6 +77,6 @@ async def file_delete(
     """
     Delete file
     """
-    file = delete_file(db, file_id)
-    await FileS3Manager(user=current_user).delete(file)
+    await delete_file(db, file_id)
+    # await FileS3Manager(user=current_user).delete(file)
     return {"status": True}

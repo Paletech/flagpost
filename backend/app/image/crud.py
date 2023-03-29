@@ -1,43 +1,45 @@
+from typing import List
 from uuid import UUID
 
 from fastapi import HTTPException, status
-from sqlalchemy.orm import Session
-import typing as t
-
-from . import schemas
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db import models
+from app.db.models import Images
+from app.image.schemas import ImageOut
 
 
-def get_all_images(db: Session, skip: int = 0, limit: int = 100) -> t.List[schemas.ImageOut]:
-    return db.query(models.Images).offset(skip).limit(limit).all()
+async def get_all_images(db: AsyncSession, skip: int = 0, limit: int = 100) -> List[ImageOut]:
+    result = await db.execute(select(Images).offset(skip).limit(limit))
+    images = result.scalars().all()
+    return images
 
 
-def get_image(db: Session, image_id: UUID):
-    image = db.query(models.Images).filter(models.Images.id == image_id).first()
+async def get_image(db: AsyncSession, image_id: UUID):
+    result = await db.execute(select(Images).filter_by(id=image_id))
+    image = result.scalars().first()
     if not image:
         raise HTTPException(status_code=404, detail="File not found")
     return image
 
 
-def create_image(db: Session, path):
+async def create_image(db: AsyncSession, path):
     db_image = models.Images(
         path=path,
-        # post_id=post_id,
     )
 
     db.add(db_image)
-    db.commit()
-    db.refresh(db_image)
+    await db.commit()
+    await db.refresh(db_image)
     return db_image
 
 
-def delete_image(db: Session, image: UUID):
-
-    image = get_image(db, image)
+async def delete_image(db: AsyncSession, image: UUID):
+    image = await get_image(db, image)
     if not image:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="File not found")
 
-    db.delete(image)
-    db.commit()
+    await db.delete(image)
+    await db.commit()
     return image
