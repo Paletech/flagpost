@@ -1,10 +1,12 @@
 import datetime
-from sqlalchemy import Boolean, Column, Integer, String, ForeignKey, DateTime, Table
-from sqlalchemy.orm import relationship
+import uuid
+
+from sqlalchemy import (Boolean, Column, DateTime, ForeignKey, Integer, String,
+                        Table)
 # from sqlalchemy_utils import ColorType
 from sqlalchemy.dialects.postgresql import UUID
-import uuid
-from sqlalchemy.orm import backref
+from sqlalchemy.orm import backref, relationship
+
 from app.db.session import Base
 
 
@@ -74,8 +76,8 @@ class Posts(Base):
 
     user_id = Column(UUID(as_uuid=True), ForeignKey("user.id"))
 
-    files = relationship("Files")
-    categories = relationship("Categories", secondary=association_table, back_populates="post")
+    files = relationship("Files", lazy='selectin')
+    categories = relationship("Categories", secondary=association_table, back_populates="post", lazy="selectin")
 
 
 class Files(Base):

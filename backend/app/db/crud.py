@@ -1,13 +1,13 @@
+from typing import Sequence, Type
 from uuid import UUID
 
 from fastapi import HTTPException, status
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
-from typing import Type, List, Sequence
-from app.db.models import User
-from app.db.schemas import UserBase, UserCreate, UserEdit, UserOut
+
 from app.core.security import get_password_hash
-from sqlalchemy import select
+from app.db.models import User
+from app.db.schemas import UserBase, UserCreate, UserEdit
 
 
 async def get_user(db: AsyncSession, user_id: UUID):

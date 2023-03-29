@@ -1,9 +1,9 @@
 import datetime
 
-from sqlalchemy import Boolean, Column, Integer, String, ForeignKey, DateTime
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy_utils import ColorType
-from app.db.session import Base
 
+from app.db.session import Base
 
 # class Images(Base):
 #     __tablename__ = "image"

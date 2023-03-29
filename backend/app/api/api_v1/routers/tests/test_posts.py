@@ -1,5 +1,6 @@
-from app.db.models import Posts
 from fastapi import status
+
+from app.db.models import Posts
 
 
 def test_unauthenticated_all_posts_routers(client):

@@ -1,11 +1,13 @@
 import os
 from datetime import timedelta
-from app.core import security
-from app.core.auth import authenticate_user, sign_up_new_user, get_current_user
-from app.core.s3.session import AWSSession
-from app.db.session import get_db
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
+
+from app.core import security
+from app.core.auth import authenticate_user, get_current_user, sign_up_new_user
+from app.core.s3.session import AWSSession
+from app.db.session import get_db
 
 auth_router = r = APIRouter()
 

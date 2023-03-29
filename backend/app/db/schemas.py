@@ -1,7 +1,7 @@
+import typing as t
 from uuid import UUID
 
 from pydantic import BaseModel
-import typing as t
 
 
 class UserBase(BaseModel):

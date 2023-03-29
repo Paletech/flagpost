@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
 
-from app.db.session import Base
 from fastapi import UploadFile
+
 from app.core.s3.session import AWSSession
+from app.db.session import Base
 
 
 class AbstractBaseS3Manager(ABC):
