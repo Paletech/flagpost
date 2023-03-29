@@ -60,7 +60,7 @@ services:
       - ./.docker/.ipython:/root/.ipython:cached
     environment:
       PYTHONPATH: .
-      DATABASE_URL: 'postgresql://postgres:password@postgres:5432/postgres'
+      DATABASE_URL: 'postgresql+asyncpg://postgres:password@postgres:5432/postgres'
       CELERY_BROKER_URL: "redis://redis:6379/0"
     depends_on:
       - postgres

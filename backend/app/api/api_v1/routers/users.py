@@ -24,7 +24,7 @@ async def users_list(
     """
     Get all users
     """
-    users = get_users(db)
+    users = await get_users(db)
     # This is necessary for react-admin to work
     response.headers["Access-Control-Expose-Headers"] = "Content-Range"
     response.headers["Content-Range"] = f"0-9/{len(users)}"
@@ -53,7 +53,7 @@ async def user_details(
     """
     Get any user details
     """
-    user = get_user(db, user_id)
+    user = await get_user(db, user_id)
     return user
     # return encoders.jsonable_encoder(
     #     user, skip_defaults=True, exclude_none=True,
@@ -70,7 +70,8 @@ async def user_create(
     """
     Create a new user
     """
-    return create_user(db, user)
+    user = await create_user(db, user)
+    return user
 
 
 @r.put(
@@ -101,4 +102,5 @@ async def user_delete(
     """
     Delete existing user
     """
-    return delete_user(db, user_id)
+    user = await delete_user(db, user_id)
+    return user

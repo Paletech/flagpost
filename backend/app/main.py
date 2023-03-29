@@ -12,7 +12,7 @@ from app.api.api_v1.routers.posts import posts_router
 from app.api.api_v1.routers.users import users_router
 from app.api.api_v1.routers.auth import auth_router
 from app.core import config
-from app.db.session import SessionLocal
+from app.db.session import AsyncSessionLocal
 from app.core.auth import get_current_active_user
 from app.core.celery_app import celery_app
 
@@ -33,9 +33,9 @@ app.add_middleware(
 
 @app.middleware("http")
 async def db_session_middleware(request: Request, call_next):
-    request.state.db = SessionLocal()
+    request.state.db = AsyncSessionLocal()
     response = await call_next(request)
-    request.state.db.close()
+    await request.state.db.close()
     return response
 
 

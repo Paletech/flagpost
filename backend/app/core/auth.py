@@ -1,14 +1,14 @@
 import jwt
 from fastapi import Depends, HTTPException, status
 from jwt import PyJWTError
-
+from app.db.session import AsyncSessionLocal
 from app.db import models, schemas, session
 from app.db.crud import get_user_by_email, create_user
 from app.core import security
 
 
 async def get_current_user(
-    db=Depends(session.get_db), token: str = Depends(security.oauth2_scheme)
+    db: AsyncSessionLocal = Depends(session.get_db), token: str = Depends(security.oauth2_scheme)
 ):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -26,7 +26,7 @@ async def get_current_user(
         token_data = schemas.TokenData(email=email, permissions=permissions)
     except PyJWTError:
         raise credentials_exception
-    user = get_user_by_email(db, token_data.email)
+    user = await get_user_by_email(db, token_data.email)
     if user is None:
         raise credentials_exception
     return user
@@ -50,8 +50,8 @@ async def get_current_active_superuser(
     return current_user
 
 
-def authenticate_user(db, email: str, password: str):
-    user = get_user_by_email(db, email)
+async def authenticate_user(db: AsyncSessionLocal, email: str, password: str):
+    user = await get_user_by_email(db, email)
     if not user:
         return False
     if not security.verify_password(password, user.hashed_password):

@@ -28,7 +28,7 @@ async def get_sts_credentials(current_user=Depends(get_current_user)):
 async def login(
     db=Depends(get_db), form_data: OAuth2PasswordRequestForm = Depends()
 ):
-    user = authenticate_user(db, form_data.username, form_data.password)
+    user = await authenticate_user(db, form_data.username, form_data.password)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
