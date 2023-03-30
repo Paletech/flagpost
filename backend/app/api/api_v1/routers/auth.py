@@ -15,7 +15,7 @@ async def get_sts_credentials(current_user=Depends(get_current_user)):
     role_arn = os.getenv("AWS_ROLE_ARN")
     session = AWSSession()
     async with session.client("sts") as sts:
-        assumed_role = await sts.assume_role(RoleArn=role_arn, RoleSessionName="image-session", DurationSeconds=120)
+        assumed_role = await sts.assume_role(RoleArn=role_arn, RoleSessionName="image-session", DurationSeconds=900)
     credentials: dict = assumed_role["Credentials"]
     return {
         "accessKeyId": credentials.get("AccessKeyId"),
