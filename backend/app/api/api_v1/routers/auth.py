@@ -14,6 +14,14 @@ auth_router = r = APIRouter()
 
 @r.get("/aws_token")
 async def get_sts_credentials(current_user=Depends(get_current_user)):
+    """
+
+    Args:
+        current_user (User):
+
+    Returns:
+
+    """
     role_arn = os.getenv("AWS_ROLE_ARN")
     session = AWSSession()
     async with session.client("sts") as sts:

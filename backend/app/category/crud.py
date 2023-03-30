@@ -28,15 +28,15 @@ async def get_my_category(db: AsyncSession, skip: int, limit: int, user_id: UUID
     return category
 
 
-async def get_category(db: AsyncSession, category_id: UUID):
+async def get_category(db: AsyncSession, category_id: UUID) -> Categories:
     result = await db.execute(select(Categories).filter_by(id=category_id))
-    category = result.scalars().first()
+    category = result.scalar_one_or_none()
     if not category:
         raise HTTPException(status_code=404, detail="Category not found")
     return category
 
 
-async def create_category(db: AsyncSession, user_id: UUID, category: CategoryCreate):
+async def create_category(db: AsyncSession, user_id: UUID, category: CategoryCreate) -> Categories:
 
     if category.image_id is not None:
         image = await db.execute(select(Images).filter_by(id=category.image_id))
@@ -67,7 +67,7 @@ async def create_category(db: AsyncSession, user_id: UUID, category: CategoryCre
 #     return db_category
 
 
-async def delete_category(db: AsyncSession, category: UUID):
+async def delete_category(db: AsyncSession, category: UUID) -> Categories:
     category = await get_category(db, category)
     if not category:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Category not found")
@@ -84,7 +84,7 @@ async def edit_category(db: AsyncSession, category_id: UUID, category: CategoryE
     if category.image_id and update_data.get("image_id") is not None:
         query = await db.execute(
             select(Categories.id)
-            .where(Images.id==update_data.get("image_id"))
+            .where(Images.id == update_data.get("image_id"))
         )
         cat_id = query.scalars().first()
         if not cat_id:

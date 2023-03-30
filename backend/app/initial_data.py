@@ -2,13 +2,14 @@
 
 from app.db.crud import create_user
 from app.db.schemas import UserCreate
-from app.db.session import SessionLocal
+from app.db.session import AsyncSessionLocal
+import asyncio
 
 
-def init() -> None:
-    db = SessionLocal()
+async def init() -> None:
+    db = AsyncSessionLocal()
 
-    create_user(
+    await create_user(
         db,
         UserCreate(
             email="admin@admin.com",
@@ -17,9 +18,10 @@ def init() -> None:
             is_superuser=True,
         ),
     )
+    await db.close()
 
 
 if __name__ == "__main__":
     print("Creating superuser admin@admin.com")
-    init()
+    asyncio.get_event_loop().run_until_complete(init())
     print("Superuser created")

@@ -1,4 +1,4 @@
-from typing import List
+from typing import Collection
 from uuid import UUID
 
 from fastapi import HTTPException, status
@@ -10,7 +10,7 @@ from app.db.models import Categories, Files, Posts
 from app.post.schemas import PostBase, PostCreate, PostOut
 
 
-async def get_all_posts(db: AsyncSession, skip: int = 0, limit: int = 100) -> List[PostOut]:
+async def get_all_posts(db: AsyncSession, skip: int = 0, limit: int = 100) -> Collection[PostOut]:
     result = await db.execute(select(Posts).offset(skip).limit(limit))
     posts = result.scalars().all()
     return posts
@@ -24,15 +24,15 @@ async def get_post(db: AsyncSession, post_id: UUID):
     return post
 
 
-async def get_my_post(db: AsyncSession, post_id: UUID, user_id: UUID):
+async def get_my_post(db: AsyncSession, post_id: UUID, user_id: UUID) -> Posts:
     result = await db.execute(select(Posts).filter_by(user_id=user_id, id=post_id))
-    post = result.scalars().first()
+    post = result.scalar_one_or_none()
     if not post:
         raise HTTPException(status_code=404, detail="Post not found")
     return post
 
 
-async def create_post(db: AsyncSession, user_id: UUID, post: PostCreate):
+async def create_post(db: AsyncSession, user_id: UUID, post: PostCreate) -> Posts:
     db_post = Posts(
         user_id=user_id,
         text=post.text,
@@ -73,7 +73,7 @@ async def create_post(db: AsyncSession, user_id: UUID, post: PostCreate):
     return db_post
 
 
-async def delete_post(db: AsyncSession, user_id: UUID, post_id: UUID):
+async def delete_post(db: AsyncSession, user_id: UUID, post_id: UUID) -> Posts:
     post = await get_my_post(db, post_id, user_id)
     if not post:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Post not found")
@@ -90,7 +90,7 @@ async def edit_post(db: AsyncSession, user_id: UUID, post_id: UUID, post: PostBa
     if update_data.get("files") is not None:
         query = await db.execute(
             select(Posts.id)
-            .filter(Files.id==update_data.get('files'))
+            .filter(Files.id == update_data.get('files'))
         )
         result = query.scalars().first()
         if not result:

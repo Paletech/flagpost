@@ -60,7 +60,7 @@ async def post_upload_file(
     """
     Upload file
     """
-    path = "as"# await FileS3Manager(user=current_user).upload(file=file)
+    path = await FileS3Manager(user=current_user).upload(file=file)
     file = await create_file(db, post_id, path)
     return file
 

@@ -121,7 +121,7 @@ async def categories_delete(
 
 @r.put(
     "/categories/{category_id}",
-    #response_model=CategoryOut
+    response_model=CategoryOut
 )
 async def categories_update(
         request: Request,
