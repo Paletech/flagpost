@@ -1,4 +1,4 @@
-from typing import List
+from typing import Collection
 from uuid import UUID
 
 from fastapi import HTTPException, status
@@ -9,14 +9,19 @@ from app.category.schemas import CategoryCreate, CategoryEdit, CategoryOut
 from app.db.models import Categories, Images
 
 
-async def get_all_categories(db: AsyncSession, skip: int, limit: int) -> List[CategoryOut]:
+async def get_all_categories(db: AsyncSession, skip: int, limit: int) -> Collection[CategoryOut]:
     result = await db.execute(select(Categories).offset(skip).limit(limit))
     categories = result.scalars().all()
     return categories
 
 
-async def get_my_category(db: AsyncSession, skip: int, limit: int, user_id: UUID):
-    result = await db.execute(select(Categories).filter_by(user_id=user_id))
+async def get_my_category(db: AsyncSession, skip: int, limit: int, user_id: UUID) -> Collection[CategoryOut]:
+    result = await db.execute(
+        select(Categories)
+        .filter_by(user_id=user_id)
+        .offset(skip)
+        .limit(limit)
+    )
     category = result.scalars().all()
     if not category:
         raise HTTPException(status_code=404, detail="Category not found")
@@ -76,8 +81,13 @@ async def edit_category(db: AsyncSession, category_id: UUID, category: CategoryE
     if not db_category:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Category not found")
     update_data = category.dict(exclude_unset=True)
-    if category.image_id and update_data["image_id"] is not None:
-        if not db.query(Categories.id).filter(Images.id == update_data["image_id"]).first():
+    if category.image_id and update_data.get("image_id") is not None:
+        query = await db.execute(
+            select(Categories.id)
+            .where(Images.id==update_data.get("image_id"))
+        )
+        cat_id = query.scalars().first()
+        if not cat_id:
             raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Image not found")
     for key, value in update_data.items():
         setattr(db_category, key, value)

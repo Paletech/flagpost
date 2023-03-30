@@ -121,7 +121,7 @@ async def categories_delete(
 
 @r.put(
     "/categories/{category_id}",
-    response_model=CategoryOut
+    #response_model=CategoryOut
 )
 async def categories_update(
         request: Request,
@@ -133,5 +133,5 @@ async def categories_update(
     """
     Update category
     """
-    category = await edit_category(db, category_id, category)
-    return category
+    updates_category = await edit_category(db, category_id, category)
+    return updates_category

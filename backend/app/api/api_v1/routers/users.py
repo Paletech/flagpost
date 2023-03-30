@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, Request, Response
 from app.core.auth import get_current_active_superuser, get_current_active_user
 from app.db.crud import (create_user, delete_user, edit_user, get_user,
                          get_users)
-from app.db.schemas import User, UserCreate, UserEdit
+from app.db.schemas import User, UserCreate, UserEdit, UserOut
 from app.db.session import get_db
 
 users_router = r = APIRouter()
@@ -88,7 +88,8 @@ async def user_edit(
     """
     Update existing user
     """
-    return edit_user(db, user_id, user)
+    updated_user = await edit_user(db=db, user_id=user_id, user=user)
+    return updated_user
 
 
 @r.delete(
