@@ -64,7 +64,7 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
         LAMBDA_FUNCTION_NAME: flagpost
-        S3_BUCKET_NAME: flagpost-lambda
+        S3_BUCKET_NAME: flagpost-lambda-bucket
       run: |
         aws lambda update-function-code \
           --function-name ${{ env.LAMBDA_FUNCTION_NAME }} \
