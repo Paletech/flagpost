@@ -54,7 +54,7 @@ jobs:
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        S3_BUCKET_NAME: flagpost-lambda
+        S3_BUCKET_NAME: flagpost-lambda-bucket
       run: |
         aws s3 cp lambda.zip s3://${{ env.S3_BUCKET_NAME }}/lambda.zip
     
