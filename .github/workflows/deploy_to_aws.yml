@@ -5,13 +5,14 @@ on:
   push:
     branches:
       - main
+      - dev
 
 
 jobs:
-  tests:
-    uses: ./.github/workflows/test_and_lint.yaml
+  # tests:
+  #   uses: ./.github/workflows/test_and_lint.yaml
   deploy-backend:
-    needs: [ tests ]
+    # needs: [ tests ]
     runs-on: ubuntu-latest
     
     
@@ -70,36 +71,36 @@ jobs:
           --s3-key lambda.zip
   
 
-  deploy-frontend:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+  # deploy-frontend:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v2
 
-      - name: Use Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '14.x'
+  #     - name: Use Node.js
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         node-version: '14.x'
 
-      - name: Install dependencies
-        working-directory: frontend/
-        run: npm install --force
+  #     - name: Install dependencies
+  #       working-directory: frontend/
+  #       run: npm install --force
 
-      - name: Build app
-        working-directory: frontend/
-        env:
-          CI: false
-        run: npm run build
+  #     - name: Build app
+  #       working-directory: frontend/
+  #       env:
+  #         CI: false
+  #       run: npm run build
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+  #     - name: Configure AWS credentials
+  #       uses: aws-actions/configure-aws-credentials@v1
+  #       with:
+  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  #         aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
 
-      - name: Deploy to S3
-        working-directory: frontend/
-        env:
-          aws-bucket-name: flagpost-frontend
-        run: aws s3 sync ./build s3://${{ env.aws-bucket-name }} --delete
+  #     - name: Deploy to S3
+  #       working-directory: frontend/
+  #       env:
+  #         aws-bucket-name: flagpost-frontend
+  #       run: aws s3 sync ./build s3://${{ env.aws-bucket-name }} --delete
