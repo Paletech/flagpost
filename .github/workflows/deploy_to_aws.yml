@@ -47,7 +47,10 @@ jobs:
     
     - name: Create deployment package
       working-directory: backend
-      run: zip lambda.zip -r . -x "*.zip*" "lambda.zip" "*__pycache__*" "*alembic*" "*git*" "*venv*"
+      run: |
+        pip3.8 install -t lib -r requirements.txt
+        (cd lib; zip ../lambda.zip -r .)  
+        zip lambda.zip -r . -x "*.zip*" "lambda.zip"  "*alembic*" "*git*" "*venv*" "*lib*"
     
     - name: Upload to S3
       working-directory: backend
@@ -71,7 +74,6 @@ jobs:
           --s3-bucket ${{ env.S3_BUCKET_NAME }} \
           --s3-key lambda.zip
   
-
   # deploy-frontend:
   #   runs-on: ubuntu-latest
   #   steps:
