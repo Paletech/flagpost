@@ -339,3 +339,6 @@ fabric.properties
 
 Pipfile
 Pipfile.lock
+.vscode
+.mypy.ini
+.pre-commit-config.yaml

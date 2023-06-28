@@ -1,7 +1,12 @@
 [flake8]
-max-line-length = 120
 exclude =
     alembic,
     models.py,
     schemas.py,
+max-line-length = 127
+count = True
+max-complexity = 10
+docstring-convention = google
+import-order-style = cryptography
+inline-quotes = "
 
