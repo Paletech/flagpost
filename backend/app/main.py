@@ -1,8 +1,7 @@
-from fastapi import FastAPI, Depends
-from fastapi.middleware.cors import CORSMiddleware
-from starlette.requests import Request
+import os
+
 import uvicorn
-from mangum import Mangum
+from app.api.api_v1.routers.auth import auth_router
 
 # from api.api_v1.routers.jobs import jobs_router
 from app.api.api_v1.routers.categories import categories_router
@@ -10,25 +9,26 @@ from app.api.api_v1.routers.files import files_router
 from app.api.api_v1.routers.images import images_router
 from app.api.api_v1.routers.posts import posts_router
 from app.api.api_v1.routers.users import users_router
-from app.api.api_v1.routers.auth import auth_router
 from app.core import config
-from app.db.session import SessionLocal
 from app.core.auth import get_current_active_user
 from app.core.celery_app import celery_app
+from app.db.session import SessionLocal
 
+from fastapi import Depends, FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from mangum import Mangum
+from starlette.requests import Request
 
-app = FastAPI(
-    title=config.PROJECT_NAME, docs_url="/api/docs", openapi_url="/api"
-)
+app = FastAPI(title=config.PROJECT_NAME, docs_url="/api/docs", openapi_url="/api")
 
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+if NOT_LAMBDA_URL_CORS := os.getenv("LAMBDA_CORS"):
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
 
 @app.middleware("http")
