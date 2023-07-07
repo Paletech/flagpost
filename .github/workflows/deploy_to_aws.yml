@@ -103,5 +103,5 @@ jobs:
       - name: Deploy to S3
         working-directory: frontend/
         env:
-          aws-bucket-name: www.flagpost.io
+          aws-bucket-name: flagpost.link
         run: aws s3 sync ./build s3://${{ env.aws-bucket-name }} --delete
